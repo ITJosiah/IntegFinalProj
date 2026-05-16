@@ -14,7 +14,7 @@
     --danger: #EF4444;
     --danger-light: #FEE2E2;
 
-    --text-main: #0F172A;
+    --text-main: #000000;
     --text-sub: #334155;
     --text-muted: #64748B;
     --text-faint: #94A3B8;
@@ -87,12 +87,18 @@ body {
 }
 
 .brand {
-    font-size: 1.375rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: var(--primary);
     text-decoration: none;
     letter-spacing: -0.03em;
     flex-shrink: 0;
+}
+
+.navbar .nav-container .brand .sync-part,
+.brand .sync-part {
+    color: #000000 !important;
+    font-weight: 800 !important;
 }
 
 .nav-tabs {

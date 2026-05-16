@@ -3,10 +3,10 @@
 :root {
     --bg-primary: #F8FAFC;
     --bg-surface: #FFFFFF;
-    --primary: #2563EB;
+    --primary: #2563eb;
     --primary-hover: #1D4ED8;
     --primary-light: #EFF6FF;
-    --text-main: #0F172A;
+    --text-main: #000000;
     --text-muted: #64748B;
     --border-color: #E2E8F0;
     --success: #10B981;

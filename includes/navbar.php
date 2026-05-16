@@ -1,26 +1,36 @@
 <?php
-// includes/navbar.php
-// Requires: $activePage (string) — set this in the parent page BEFORE including.
-// Example:  $activePage = 'dashboard';
+// includes/navbar.php - Auto-detection version
 
 $navItems = [
-    'dashboard'    => ['label' => 'Home',         'href' => 'customer_dashboard.php'],
-    'drugs'        => ['label' => 'Drugs',       'href' => 'customer_medications.php'],
-    'pharmacies'   => ['label' => 'Pharmacies',  'href' => 'customer_pharmacies.php'],
-    'orders'       => ['label' => 'Refills',     'href' => 'customer_orders.php'],
-    'appointments' => ['label' => 'Appointments','href' => 'customer_appointment.php'],
-    'support'      => ['label' => 'Support',     'href' => 'customer_support.php'],
+        'home'        => ['label' => 'Home',         'href' => 'customer_medications.php'],
+        'pharmacies'  => ['label' => 'Pharmacies',  'href' => 'customer_pharmacies.php'],
+        //'profile'     => ['label' => 'Profile',     'href' => 'customer_dashboard.php'],
+        'support'     => ['label' => 'About',     'href' => 'customer_support.php'],
 ];
+
+// Get current page filename
+$currentFile = basename($_SERVER['PHP_SELF']);
+
+// Map filenames to nav keys
+$pageToNavKey = [
+        'customer_medications.php' => 'home',
+        'customer_pharmacies.php'  => 'pharmacies',
+        'customer_dashboard.php'   => 'profile',
+        'customer_support.php'     => 'support'
+];
+
+// Determine active page
+$activeNavKey = isset($pageToNavKey[$currentFile]) ? $pageToNavKey[$currentFile] : '';
 ?>
 <nav class="navbar">
     <div class="nav-container">
-        <a href="../index.php" class="brand">PharmaSync</a>
+        <a href="index.php" class="brand">Pharma<span class="sync-part" style="color: black;">Sync</span></a>
 
         <ul class="nav-tabs">
             <?php foreach ($navItems as $key => $item): ?>
                 <li>
                     <a href="<?= htmlspecialchars($item['href']) ?>"
-                       class="<?= (isset($activePage) && $activePage === $key) ? 'active' : '' ?>">
+                       class="<?= ($activeNavKey === $key) ? 'active' : '' ?>">
                         <?= htmlspecialchars($item['label']) ?>
                     </a>
                 </li>

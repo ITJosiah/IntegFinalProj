@@ -1,0 +1,395 @@
+/* ============================================================
+   HEADER SECTION
+   ============================================================ */
+.pharm-header {
+    padding: 3rem 0 2rem;
+}
+
+.pharm-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0 0 0.75rem;
+}
+
+.pharm-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 620px;
+}
+
+/* ============================================================
+   MAIN GRID LAYOUT
+   ============================================================ */
+.pharm-main {
+    width: 100%;
+    margin-bottom: 3rem;
+}
+
+.pharm-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* ============================================================
+   PHARMACY LISTINGS (left column)
+   ============================================================ */
+.pharm-listings {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pharm-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    transition: var(--transition);
+}
+
+.pharm-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-mid);
+}
+
+.pharm-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.pharm-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.pharm-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.pharm-address {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.pharm-address svg {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    color: var(--text-faint);
+}
+
+/* Status badges */
+.pharm-status {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.pharm-status.open {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.pharm-status.closed {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Action buttons */
+.pharm-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.pharm-btn {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.pharm-btn.phone,
+.pharm-btn.info {
+    width: 40px;
+    height: 40px;
+    background: var(--bg-page);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+.pharm-btn.phone:hover,
+.pharm-btn.info:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary-mid);
+}
+
+.pharm-btn.primary {
+    background: var(--primary);
+    color: white;
+    padding: 0.6rem 1rem;
+}
+
+.pharm-btn.primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.pharm-btn.secondary {
+    background: var(--bg-page);
+    color: var(--text-muted);
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+}
+
+.pharm-btn.secondary:hover {
+    background: var(--border-light);
+}
+
+/* ============================================================
+   SIDEBAR (right column)
+   ============================================================ */
+.pharm-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: sticky;
+    top: calc(var(--navbar-h) + 1rem);
+}
+
+/* ── MAP CARD ── */
+.pharm-map-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    overflow: hidden;
+}
+
+.pharm-map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.pharm-map-header h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.pharm-nearby {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pharm-nearby:hover {
+    color: var(--primary-hover);
+}
+
+.pharm-map {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.pharm-map-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.pharm-pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.pharm-pin-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pharm-pin-circle.blue {
+    background: var(--primary);
+}
+
+.pharm-pin-circle.yellow {
+    background: #F59E0B;
+}
+
+.pharm-expand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pharm-expand-link:hover {
+    color: var(--primary-hover);
+    gap: 0.6rem;
+}
+
+/* ── EMERGENCY CARD ── */
+.pharm-emergency-card {
+    background: linear-gradient(160deg, #1E40AF 0%, #1E3A8A 100%);
+    border-radius: 12px;
+    padding: 1.5rem 1.25rem;
+    color: white;
+}
+
+.pharm-emergency-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.015em;
+}
+
+.pharm-emergency-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+    margin: 0 0 1.25rem;
+}
+
+.pharm-emergency-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: white;
+    color: var(--primary);
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.pharm-emergency-btn:hover {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .pharm-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .pharm-sidebar {
+        order: -1;
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pharm-header {
+        padding: 2rem 0 1.5rem;
+    }
+
+    .pharm-title {
+        font-size: 2rem;
+    }
+
+    .pharm-card {
+        padding: 1.25rem;
+    }
+
+    .pharm-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .pharm-actions {
+        justify-content: flex-start;
+        gap: 0.75rem;
+    }
+
+    .pharm-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .pharm-map {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pharm-title {
+        font-size: 1.6rem;
+    }
+
+    .pharm-actions {
+        width: 100%;
+    }
+
+    .pharm-btn.primary {
+        flex: 1;
+    }
+}

@@ -3,7 +3,8 @@ require_once 'includes/session_guard.php';
 
 /** @var string $greeting Provided by includes/session_guard.php */
 
-$activePage = 'dashboard';
+$activePage = 'profile';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +17,7 @@ $activePage = 'dashboard';
 </head>
 <body>
 
+<!-- Shared navbar -->
 <?php require_once 'includes/navbar.php'; ?>
 
 <div class="layout">
