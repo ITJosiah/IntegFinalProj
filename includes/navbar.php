@@ -5,7 +5,7 @@
 
 $navItems = [
     'dashboard'    => ['label' => 'Home',         'href' => 'customer_dashboard.php'],
-    'drugs'        => ['label' => 'Drugs',       'href' => 'customer_dashboard.php'],
+    'drugs'        => ['label' => 'Drugs',       'href' => 'customer_medications.php'],
     'pharmacies'   => ['label' => 'Pharmacies',  'href' => 'customer_pharmacies.php'],
     'orders'       => ['label' => 'Refills',     'href' => 'customer_orders.php'],
     'appointments' => ['label' => 'Appointments','href' => 'customer_appointment.php'],
@@ -14,7 +14,7 @@ $navItems = [
 ?>
 <nav class="navbar">
     <div class="nav-container">
-        <a href="../index.php" class="brand">PharmaDirect</a>
+        <a href="../index.php" class="brand">PharmaSync</a>
 
         <ul class="nav-tabs">
             <?php foreach ($navItems as $key => $item): ?>

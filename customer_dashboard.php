@@ -1,10 +1,8 @@
 <?php
-// ── 1. Shared session logic (sets $_SESSION vars + $greeting) ──
 require_once 'includes/session_guard.php';
 
 /** @var string $greeting Provided by includes/session_guard.php */
 
-// ── 2. Set active nav tab for this page ──
 $activePage = 'dashboard';
 ?>
 <!DOCTYPE html>
@@ -13,20 +11,16 @@ $activePage = 'dashboard';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Portal - PharmaDirect</title>
-    <!-- ── 3. Global shared styles (variables, reset, navbar, footer) ── -->
     <link rel="stylesheet" href="assets/css/global.css">
-    <!-- ── 4. Dashboard-specific styles ── -->
     <link rel="stylesheet" href="assets/css/customer_dashboard.css">
 </head>
 <body>
 
-<!-- ── 5. Shared navbar component ── -->
 <?php require_once 'includes/navbar.php'; ?>
 
 <div class="layout">
     <main class="main-content">
 
-        <!-- HERO / GREETING -->
         <div class="hero-section">
             <h1 class="hero-title">
                 <?php echo $greeting; ?>, <?php echo htmlspecialchars($_SESSION['user_name']); ?>.
@@ -37,10 +31,8 @@ $activePage = 'dashboard';
             </p>
         </div>
 
-        <!-- DASHBOARD GRID -->
         <div class="dashboard-grid">
 
-            <!-- Active Medications Card -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">Active Medications</span>
