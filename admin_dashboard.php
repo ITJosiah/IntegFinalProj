@@ -68,8 +68,8 @@ session_start();
                 <span><span style="color: var(--primary);">Pharma</span><span>Sync</span></span>
             </a>
             <div class="nav-links">
-                <span class="badge" style="background:#EFF6FF; color:var(--primary); font-weight:700; padding:0.5rem 1rem; border-radius:0.5rem;">Role: Middleware Admin</span>
-                <a href="index.php" class="btn btn-outline">Switch Account</a>
+                <span style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL: MIDDLEWARE ADMIN</span>
+                <a href="index.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
     </nav>

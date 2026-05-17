@@ -52,8 +52,8 @@ foreach (['pharmacy_laurents', 'pharmacy_jrmp', 'pharmacy_jas5'] as $db) {
     if ($nodes[str_replace('pharmacy_', '', $db)] === "ONLINE") {
         try {
             $node_pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-            $total_skus += $node_pdo->query("SELECT COUNT(*) FROM medicines")->fetchColumn();
-            $total_stock += $node_pdo->query("SELECT SUM(stock) FROM medicines")->fetchColumn() ?: 0;
+            $total_skus += $node_pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+            $total_stock += $node_pdo->query("SELECT SUM(stock) FROM products")->fetchColumn() ?: 0;
         } catch (\Exception $e) {}
     }
 }

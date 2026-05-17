@@ -25,21 +25,25 @@ foreach ($dbs as $code => $dbName) {
 
     $db = getDBConnection($dbName);
     if ($query === '') {
-        $sql = "SELECT m.id, m.generic_name, b.name as brand_name, c.name as category, m.price, m.stock 
-                FROM medicines m 
-                JOIN brands b ON m.brand_id = b.id 
-                JOIN categories c ON b.category_id = c.id 
+        $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock 
+                FROM products p 
+                JOIN medicines m ON p.medicine_id = m.id 
+                JOIN categories c ON p.category_id = c.id 
                 ORDER BY m.generic_name ASC";
         $stmt = $db->query($sql);
     } else {
-        $sql = "SELECT m.id, m.generic_name, b.name as brand_name, c.name as category, m.price, m.stock 
-                FROM medicines m 
-                JOIN brands b ON m.brand_id = b.id 
-                JOIN categories c ON b.category_id = c.id 
-                WHERE m.generic_name LIKE :q OR b.name LIKE :q OR c.name LIKE :q 
+        $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock 
+                FROM products p 
+                JOIN medicines m ON p.medicine_id = m.id 
+                JOIN categories c ON p.category_id = c.id 
+                WHERE m.generic_name LIKE :q1 OR p.brand_name LIKE :q2 OR c.name LIKE :q3 
                 ORDER BY m.generic_name ASC";
         $stmt = $db->prepare($sql);
-        $stmt->execute(['q' => "%$query%"]);
+        $stmt->execute([
+            'q1' => "%$query%",
+            'q2' => "%$query%",
+            'q3' => "%$query%"
+        ]);
     }
 
     while ($med = $stmt->fetch()) {

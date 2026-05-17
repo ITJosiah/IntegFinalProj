@@ -1,5 +1,5 @@
--- PharmaSync Fully Normalized Pure DDL Schema
--- Hierarchical entities: categories -> brands -> medicines
+-- PharmaSync Fully Normalized Pure DDL Schema (Healthcare Standard Option B)
+-- Hierarchical entities: categories & medicines (generics) -> products (commercial branded strength SKUs)
 
 -- 1. CORE DATABASE (Middleware & Logs)
 DROP DATABASE IF EXISTS pharmasync_core;
@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS pharmacies (
     code VARCHAR(20) NOT NULL UNIQUE,
     address VARCHAR(255) NOT NULL,
     contact_number VARCHAR(50),
+    email VARCHAR(100),
+    latitude DECIMAL(10, 8) DEFAULT 14.0702,
+    longitude DECIMAL(11, 8) DEFAULT 122.9610,
     is_open BOOLEAN DEFAULT TRUE,
     last_sync DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -35,22 +38,23 @@ CREATE TABLE IF NOT EXISTS categories (
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS brands (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    category_id INT NOT NULL,
-    manufacturer VARCHAR(100),
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS medicines (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    generic_name VARCHAR(100) NOT NULL,
-    brand_id INT NOT NULL,
+    generic_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    brand_name VARCHAR(100) NOT NULL,
+    strength VARCHAR(50) NOT NULL,
+    medicine_id INT NOT NULL,
+    category_id INT NOT NULL,
+    manufacturer VARCHAR(100),
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
 
@@ -64,22 +68,23 @@ CREATE TABLE IF NOT EXISTS categories (
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS brands (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    category_id INT NOT NULL,
-    manufacturer VARCHAR(100),
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS medicines (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    generic_name VARCHAR(100) NOT NULL,
-    brand_id INT NOT NULL,
+    generic_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    brand_name VARCHAR(100) NOT NULL,
+    strength VARCHAR(50) NOT NULL,
+    medicine_id INT NOT NULL,
+    category_id INT NOT NULL,
+    manufacturer VARCHAR(100),
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
 
@@ -93,20 +98,21 @@ CREATE TABLE IF NOT EXISTS categories (
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS brands (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    category_id INT NOT NULL,
-    manufacturer VARCHAR(100),
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS medicines (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    generic_name VARCHAR(100) NOT NULL,
-    brand_id INT NOT NULL,
+    generic_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    brand_name VARCHAR(100) NOT NULL,
+    strength VARCHAR(50) NOT NULL,
+    medicine_id INT NOT NULL,
+    category_id INT NOT NULL,
+    manufacturer VARCHAR(100),
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );

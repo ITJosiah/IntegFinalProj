@@ -5,8 +5,8 @@ $_SESSION['pharma_code'] = $pharma;
 
 $names = [
     'laurents' => "Laurent's Pharmacy",
-    'jrmp' => "JRMP Doctors Pharmacy",
-    'jas5' => "JAS5 Pharmacy"
+    'jrmp' => "JRM DOCTORS Pharmacy",
+    'jas5' => "D' Rite Aid Generics Pharmacy"
 ];
 $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 ?>
@@ -73,8 +73,8 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                 <span><span style="color: var(--primary);">Pharma</span><span style="color: black;">Sync</span></span>
             </a>
             <div class="nav-links">
-                <span class="badge badge-warning" style="background: #E0E7FF; color: var(--primary);">Portal: <?php echo $pharmaName; ?></span>
-                <a href="index.php" class="btn btn-outline">Switch Role</a>
+                <span style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL: <?php echo htmlspecialchars($pharmaName); ?></span>
+                <a href="index.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
     </nav>
@@ -99,60 +99,56 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
         <!-- ERP Tabs Navigation -->
         <div class="erp-tabs">
-            <button class="erp-tab-btn active" onclick="switchTab('medicines')">Medicines</button>
-            <button class="erp-tab-btn" onclick="switchTab('brands')">Brands</button>
+            <button class="erp-tab-btn active" onclick="switchTab('medicines')">Branded Products SKU</button>
+            <button class="erp-tab-btn" onclick="switchTab('brands')">Generics Dictionary</button>
             <button class="erp-tab-btn" onclick="switchTab('categories')">Categories</button>
         </div>
 
-        <!-- ================= TAB 1: MEDICINES ================= -->
+        <!-- ================= TAB 1: PRODUCTS SKU ================= -->
         <div id="tab_medicines" class="tab-content active animate-fade">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                <h2 style="font-size: 1.35rem; font-weight: 700;">Medicines Inventory</h2>
+                <h2 style="font-size: 1.35rem; font-weight: 700;">Products SKU Inventory</h2>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <input type="text" onkeyup="filterSpecificTable('medTableBody', this.value)" placeholder="🔍 Search medicines..." class="form-input" style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem;">
-                    <button onclick="openModal('medicineModal')" class="btn btn-primary">Add Medicine</button>
+                    <input type="text" onkeyup="filterSpecificTable('medTableBody', this.value)" placeholder="🔍 Search products..." class="form-input" style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem;">
+                    <button onclick="openModal('medicineModal')" class="btn btn-primary">Add Product SKU</button>
                 </div>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Generic Name</th>
-                            <th>Brand Name</th>
-                            <th>Category</th>
-                            <th>Price (₱)</th>
-                            <th>Current Stock</th>
-                            <th>Actions</th>
+                            <th style="width: 25%;">Product SKU</th>
+                            <th style="width: 30%;">Classification</th>
+                            <th style="width: 30%;">Inventory & Pricing</th>
+                            <th style="width: 15%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="medTableBody">
-                        <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading medicines...</td></tr>
+                        <tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading products...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ================= TAB 2: BRANDS ================= -->
+        <!-- ================= TAB 2: GENERICS ================= -->
         <div id="tab_brands" class="tab-content animate-fade">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                <h2 style="font-size: 1.35rem; font-weight: 700;">Brands Directory</h2>
+                <h2 style="font-size: 1.35rem; font-weight: 700;">Generics Dictionary</h2>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <input type="text" onkeyup="filterSpecificTable('brandTableBody', this.value)" placeholder="🔍 Search brands..." class="form-input" style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem;">
-                    <button onclick="openModal('brandModal')" class="btn btn-primary">Add Brand</button>
+                    <input type="text" onkeyup="filterSpecificTable('brandTableBody', this.value)" placeholder="🔍 Search ingredients..." class="form-input" style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem;">
+                    <button onclick="openModal('brandModal')" class="btn btn-primary">Add Generic</button>
                 </div>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Brand Name</th>
-                            <th>Assigned Category</th>
-                            <th>Manufacturer</th>
+                            <th>Generic Active Ingredient</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="brandTableBody">
-                        <tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading brands...</td></tr>
+                        <tr><td colspan="2" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading generics...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -185,18 +181,32 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
     <!-- ================= MODALS ================= -->
 
-    <!-- Add Medicine Modal -->
+    <!-- Add Product SKU Modal -->
     <div id="medicineModal" class="modal-overlay">
         <div class="modal">
-            <h2 style="margin-bottom: 1.5rem; font-weight: 700;">Add New Medicine SKU</h2>
+            <h2 style="margin-bottom: 1.5rem; font-weight: 700;">Add New Product SKU</h2>
             <form id="medForm" onsubmit="addMedicine(event)">
-                <div class="form-group">
-                    <label class="form-label">Generic Name</label>
-                    <input type="text" id="medGenName" class="form-input" placeholder="e.g. Paracetamol" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Brand Name</label>
+                        <input type="text" id="medBrandName" class="form-input" placeholder="e.g. Biogesic" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Strength</label>
+                        <input type="text" id="medStrength" class="form-input" placeholder="e.g. 500mg" required>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Select Assigned Brand</label>
+                    <label class="form-label">Active Generic Ingredient</label>
                     <select id="medBrandSelect" class="form-input" style="background: white;" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assign Category</label>
+                    <select id="medCatSelect" class="form-input" style="background: white;" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Manufacturer</label>
+                    <input type="text" id="medMan" class="form-input" placeholder="e.g. Unilab" required>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -210,32 +220,24 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
                     <button type="button" onclick="closeModal('medicineModal')" class="btn btn-outline">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Medicine</button>
+                    <button type="submit" class="btn btn-primary">Save SKU</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Add Brand Modal -->
+    <!-- Add Generic Active Ingredient Modal -->
     <div id="brandModal" class="modal-overlay">
         <div class="modal">
-            <h2 style="margin-bottom: 1.5rem; font-weight: 700;">Add New Brand Record</h2>
+            <h2 style="margin-bottom: 1.5rem; font-weight: 700;">Add New Generic Active Ingredient</h2>
             <form id="brandForm" onsubmit="addBrand(event)">
                 <div class="form-group">
-                    <label class="form-label">Brand Name</label>
-                    <input type="text" id="brandNameInput" class="form-input" placeholder="e.g. Biogesic 500mg" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Assign Category</label>
-                    <select id="brandCatSelect" class="form-input" style="background: white;" required></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Manufacturer</label>
-                    <input type="text" id="brandManInput" class="form-input" placeholder="e.g. Unilab" required>
+                    <label class="form-label">Generic Name</label>
+                    <input type="text" id="brandNameInput" class="form-input" placeholder="e.g. Paracetamol" required>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
                     <button type="button" onclick="closeModal('brandModal')" class="btn btn-outline">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Brand</button>
+                    <button type="submit" class="btn btn-primary">Save Generic</button>
                 </div>
             </form>
         </div>
@@ -298,9 +300,9 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             fetch(`api/inventory.php?action=get&pharma=${pharmaCode}`)
                 .then(res => res.json())
                 .then(data => {
-                    currentMedicinesList = data.data;
-                    currentBrandsList = data.brands;
-                    currentCategoriesList = data.categories;
+                    currentMedicinesList = data.data; // Products list
+                    currentBrandsList = data.brands;   // Generic active ingredients
+                    currentCategoriesList = data.categories; // Categories
 
                     const statusBtn = document.getElementById('toggleStatusBtn');
                     if (data.is_open == 1) {
@@ -311,14 +313,14 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
                     // Populate Dropdowns
                     const medBrandSel = document.getElementById('medBrandSelect');
-                    const brandCatSel = document.getElementById('brandCatSelect');
-                    medBrandSel.innerHTML = '<option value="">-- Select Brand --</option>';
+                    const brandCatSel = document.getElementById('medCatSelect');
+                    medBrandSel.innerHTML = '<option value="">-- Select Active Ingredient --</option>';
                     brandCatSel.innerHTML = '<option value="">-- Select Category --</option>';
 
                     currentBrandsList.forEach(b => {
                         const opt = document.createElement('option');
                         opt.value = b.id;
-                        opt.textContent = `${b.name} — [${b.category_name}]`;
+                        opt.textContent = b.name;
                         medBrandSel.appendChild(opt);
                     });
                     currentCategoriesList.forEach(c => {
@@ -328,49 +330,64 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                         brandCatSel.appendChild(opt);
                     });
 
-                    // Populate Table 1: Medicines
+                    // Populate Table 1: Products
                     const medBody = document.getElementById('medTableBody');
                     medBody.innerHTML = '';
                     if (currentMedicinesList.length === 0) {
-                        medBody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No medicines found.</td></tr>`;
+                        medBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-muted);">No products found.</td></tr>`;
                     } else {
                         currentMedicinesList.forEach(med => {
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
-                                <td><input type="text" value="${med.generic_name}" id="gen_name_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;color:var(--text-main);"></td>
                                 <td>
-                                    <select id="med_brand_sel_${med.id}" style="padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;">
-                                        ${currentBrandsList.map(b => `<option value="${b.id}" ${b.id == med.brand_id ? 'selected' : ''}>${b.name}</option>`).join('')}
-                                    </select>
+                                    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                                        <input type="text" value="${med.brand_name}" id="brand_name_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;color:var(--text-main);" placeholder="Brand Name">
+                                        <input type="text" value="${med.strength}" id="strength_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;" placeholder="Strength (e.g. 500mg)">
+                                    </div>
                                 </td>
-                                <td><span style="background:#E2E8F0;padding:0.35rem 0.75rem;border-radius:1rem;font-size:0.85rem;font-weight:600;color:#334155;white-space:nowrap;display:inline-block;">${med.category || 'N/A'}</span></td>
-                                <td><input type="number" step="0.01" value="${med.price}" id="price_${med.id}" style="width:80px;padding:0.35rem 0.5rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;color:var(--primary);"></td>
-                                <td><input type="number" value="${med.stock}" id="stock_${med.id}" style="width:80px;padding:0.35rem 0.5rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;"></td>
-                                <td style="display:flex;gap:0.5rem;align-items:center;">
-                                    <button onclick="updateMedicine(${med.id})" class="btn btn-secondary">Update</button>
-                                    <button onclick="deleteMedicine(${med.id})" class="btn btn-danger">Delete</button>
+                                <td>
+                                    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                                        <select id="med_gen_sel_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;color:var(--text-main);">
+                                            ${currentBrandsList.map(b => `<option value="${b.id}" ${b.id == med.medicine_id ? 'selected' : ''}>${b.name}</option>`).join('')}
+                                        </select>
+                                        <select id="med_cat_sel_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;">
+                                            ${currentCategoriesList.map(c => `<option value="${c.id}" ${c.id == med.category_id ? 'selected' : ''}>${c.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                                        <input type="text" value="${med.manufacturer || ''}" id="manufacturer_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;" placeholder="Manufacturer">
+                                        <div style="display:flex; gap:0.4rem;">
+                                            <div style="position:relative; flex:1; display:flex; align-items:center;">
+                                                <span style="position:absolute; left:8px; color:var(--text-muted); font-size:0.9rem; font-weight:600;">₱</span>
+                                                <input type="number" step="0.01" value="${med.price}" id="price_${med.id}" style="width:100%;padding:0.35rem 0.5rem 0.35rem 1.25rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:700;color:var(--primary);" placeholder="Price">
+                                            </div>
+                                            <input type="number" value="${med.stock}" id="stock_${med.id}" style="flex:1;width:100%;padding:0.35rem 0.5rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;" placeholder="Stock">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                                        <button onclick="updateMedicine(${med.id})" class="btn btn-secondary" style="width:100%;padding:0.35rem 0.75rem;">Update</button>
+                                        <button onclick="deleteMedicine(${med.id})" class="btn btn-danger" style="width:100%;padding:0.35rem 0.75rem;">Delete</button>
+                                    </div>
                                 </td>
                             `;
                             medBody.appendChild(tr);
                         });
                     }
 
-                    // Populate Table 2: Brands
+                    // Populate Table 2: Generics
                     const brandBody = document.getElementById('brandTableBody');
                     brandBody.innerHTML = '';
                     if (currentBrandsList.length === 0) {
-                        brandBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-muted);">No brands found.</td></tr>`;
+                        brandBody.innerHTML = `<tr><td colspan="2" style="text-align:center;padding:2rem;color:var(--text-muted);">No active ingredients found.</td></tr>`;
                     } else {
                         currentBrandsList.forEach(b => {
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
-                                <td><input type="text" value="${b.name}" id="brand_name_${b.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;"></td>
-                                <td>
-                                    <select id="brand_cat_${b.id}" style="padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;">
-                                        ${currentCategoriesList.map(c => `<option value="${c.id}" ${c.id == b.category_id ? 'selected' : ''}>${c.name}</option>`).join('')}
-                                    </select>
-                                </td>
-                                <td><input type="text" value="${b.manufacturer || ''}" id="brand_man_${b.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;"></td>
+                                <td><input type="text" value="${b.name}" id="brand_name_${b.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:600;"></td>
                                 <td style="display:flex;gap:0.5rem;">
                                     <button onclick="updateBrand(${b.id})" class="btn btn-secondary">Update</button>
                                     <button onclick="deleteBrand(${b.id})" class="btn btn-danger">Delete</button>
@@ -407,24 +424,27 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                 .then(() => loadData());
         }
 
-        // --- MEDICINE ACTIONS ---
+        // --- PRODUCT ACTIONS ---
         function updateMedicine(id) {
-            const generic_name = document.getElementById(`gen_name_${id}`).value;
-            const brand_id = document.getElementById(`med_brand_sel_${id}`).value;
+            const brand_name = document.getElementById(`brand_name_${id}`).value;
+            const strength = document.getElementById(`strength_${id}`).value;
+            const medicine_id = document.getElementById(`med_gen_sel_${id}`).value;
+            const category_id = document.getElementById(`med_cat_sel_${id}`).value;
+            const manufacturer = document.getElementById(`manufacturer_${id}`).value;
             const price = document.getElementById(`price_${id}`).value;
             const stock = document.getElementById(`stock_${id}`).value;
 
             fetch(`api/inventory.php?action=update&pharma=${pharmaCode}`, {
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ id, generic_name, brand_id, price, stock })
+                body: JSON.stringify({ id, brand_name, strength, medicine_id, category_id, price, stock, manufacturer })
             })
             .then(res => res.json())
             .then(() => {
                 fetch('api/sync.php', {
                     method: 'POST',
                     headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ pharmacy_code: pharmaCode, medicine_id: id, medicine_name: generic_name, qty_sold: 0, remaining_stock: stock })
+                    body: JSON.stringify({ pharmacy_code: pharmaCode, medicine_id: id, medicine_name: `${brand_name} ${strength}`, qty_sold: 0, remaining_stock: stock })
                 })
                 .then(() => {
                     document.getElementById('syncBanner').style.display='flex';
@@ -433,37 +453,40 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             });
         }
         function deleteMedicine(id) {
-            if (!confirm("Delete medicine?")) return;
+            if (!confirm("Delete product SKU?")) return;
             fetch(`api/inventory.php?action=delete&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({id}) }).then(() => loadData());
         }
         function addMedicine(e) {
             e.preventDefault();
-            const generic_name = document.getElementById('medGenName').value;
-            const brand_id = document.getElementById('medBrandSelect').value;
+            const brand_name = document.getElementById('medBrandName').value;
+            const strength = document.getElementById('medStrength').value;
+            const medicine_id = document.getElementById('medBrandSelect').value;
+            const category_id = document.getElementById('medCatSelect').value;
+            const manufacturer = document.getElementById('medMan').value;
             const price = document.getElementById('medPrice').value;
             const stock = document.getElementById('medStock').value;
-            fetch(`api/inventory.php?action=add&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({generic_name, brand_id, price, stock}) })
-                .then(() => { closeModal('medicineModal'); document.getElementById('medForm').reset(); loadData(); });
+
+            fetch(`api/inventory.php?action=add&pharma=${pharmaCode}`, { 
+                method:'POST', 
+                body:JSON.stringify({brand_name, strength, medicine_id, category_id, price, stock, manufacturer}) 
+            })
+            .then(() => { closeModal('medicineModal'); document.getElementById('medForm').reset(); loadData(); });
         }
 
-        // --- BRAND ACTIONS ---
+        // --- GENERIC ACTIONS ---
         function updateBrand(id) {
             const brand_name = document.getElementById(`brand_name_${id}`).value;
-            const category_id = document.getElementById(`brand_cat_${id}`).value;
-            const manufacturer = document.getElementById(`brand_man_${id}`).value;
-            fetch(`api/inventory.php?action=update_brand&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({id, brand_name, category_id, manufacturer}) })
-                .then(() => { alert("Brand updated!"); loadData(); });
+            fetch(`api/inventory.php?action=update_brand&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({id, brand_name}) })
+                .then(() => { alert("Generic active ingredient updated!"); loadData(); });
         }
         function deleteBrand(id) {
-            if (!confirm("Delete brand?")) return;
+            if (!confirm("Delete generic drug? All linked product SKUs will be deleted as well.")) return;
             fetch(`api/inventory.php?action=delete_brand&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({id}) }).then(() => loadData());
         }
         function addBrand(e) {
             e.preventDefault();
             const brand_name = document.getElementById('brandNameInput').value;
-            const category_id = document.getElementById('brandCatSelect').value;
-            const manufacturer = document.getElementById('brandManInput').value;
-            fetch(`api/inventory.php?action=add_brand&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({brand_name, category_id, manufacturer}) })
+            fetch(`api/inventory.php?action=add_brand&pharma=${pharmaCode}`, { method:'POST', body:JSON.stringify({brand_name}) })
                 .then(() => { closeModal('brandModal'); document.getElementById('brandForm').reset(); loadData(); });
         }
 

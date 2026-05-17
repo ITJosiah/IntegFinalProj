@@ -21,19 +21,16 @@ $dbName = $dbs[$pharma];
 if ($action === 'get') {
     $db = getDBConnection($dbName);
     
-    // Fetch Medicines
-    $stmt = $db->query("SELECT m.id, m.generic_name, m.brand_id, b.name as brand_name, c.name as category, m.price, m.stock 
-                        FROM medicines m 
-                        JOIN brands b ON m.brand_id = b.id 
-                        JOIN categories c ON b.category_id = c.id 
+    // Fetch Products (stocked items)
+    $stmt = $db->query("SELECT p.id, m.generic_name, p.medicine_id, p.brand_name, p.strength, p.category_id, c.name as category, p.price, p.stock, p.manufacturer 
+                        FROM products p 
+                        JOIN medicines m ON p.medicine_id = m.id 
+                        JOIN categories c ON p.category_id = c.id 
                         ORDER BY m.generic_name ASC");
-    $medicines = $stmt->fetchAll();
+    $products = $stmt->fetchAll();
 
-    // Fetch Brands
-    $stmtBrands = $db->query("SELECT b.id, b.name, b.category_id, c.name as category_name, b.manufacturer 
-                              FROM brands b 
-                              JOIN categories c ON b.category_id = c.id 
-                              ORDER BY b.name ASC");
+    // Fetch Generic Medicines (mapped to the frontend's legacy 'brands' dropdown/table)
+    $stmtBrands = $db->query("SELECT id, generic_name as name FROM medicines ORDER BY generic_name ASC");
     $brands = $stmtBrands->fetchAll();
 
     // Fetch Categories
@@ -47,7 +44,7 @@ if ($action === 'get') {
 
     echo json_encode([
         'status' => 'success', 
-        'data' => $medicines, 
+        'data' => $products, 
         'brands' => $brands,
         'categories' => $categories,
         'is_open' => $pharmaInfo['is_open']
@@ -88,61 +85,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- BRAND CRUD ---
+    // --- GENERIC MEDICINE CRUD (Mapped to legacy 'brand' endpoints) ---
     if ($action === 'add_brand') {
-        $stmt = $db->prepare("INSERT INTO brands (name, category_id, manufacturer) VALUES (:name, :cat_id, :man)");
-        $stmt->execute([
-            'name' => $input['brand_name'],
-            'cat_id' => $input['category_id'],
-            'man' => $input['manufacturer']
-        ]);
+        $stmt = $db->prepare("INSERT INTO medicines (generic_name) VALUES (:name)");
+        $stmt->execute(['name' => $input['brand_name']]);
         echo json_encode(['status' => 'success', 'brand_id' => $db->lastInsertId()]);
         exit;
     }
     if ($action === 'update_brand') {
-        $stmt = $db->prepare("UPDATE brands SET name = :name, category_id = :cat_id, manufacturer = :man WHERE id = :id");
-        $stmt->execute([
-            'name' => $input['brand_name'],
-            'cat_id' => $input['category_id'],
-            'man' => $input['manufacturer'],
-            'id' => $input['id']
-        ]);
+        $stmt = $db->prepare("UPDATE medicines SET generic_name = :name WHERE id = :id");
+        $stmt->execute(['name' => $input['brand_name'], 'id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'delete_brand') {
-        $stmt = $db->prepare("DELETE FROM brands WHERE id = :id");
+        $stmt = $db->prepare("DELETE FROM medicines WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
     }
 
-    // --- MEDICINE CRUD ---
+    // --- PRODUCT SKU CRUD (Mapped to legacy 'medicine' endpoints) ---
     if ($action === 'add') {
-        $stmt = $db->prepare("INSERT INTO medicines (generic_name, brand_id, price, stock) VALUES (:gen, :brand_id, :price, :stock)");
+        $stmt = $db->prepare("INSERT INTO products (brand_name, strength, medicine_id, category_id, price, stock, manufacturer) 
+                              VALUES (:brand_name, :strength, :medicine_id, :category_id, :price, :stock, :manufacturer)");
         $stmt->execute([
-            'gen' => $input['generic_name'],
-            'brand_id' => $input['brand_id'],
+            'brand_name' => $input['brand_name'] ?? 'Generic',
+            'strength' => $input['strength'] ?? 'Standard',
+            'medicine_id' => $input['medicine_id'],
+            'category_id' => $input['category_id'],
             'price' => $input['price'],
-            'stock' => $input['stock']
+            'stock' => $input['stock'],
+            'manufacturer' => $input['manufacturer'] ?? ''
         ]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'update') {
-        $stmt = $db->prepare("UPDATE medicines SET generic_name = :gen, brand_id = :brand_id, price = :price, stock = :stock WHERE id = :id");
+        $stmt = $db->prepare("UPDATE products SET brand_name = :brand_name, strength = :strength, medicine_id = :medicine_id, category_id = :category_id, price = :price, stock = :stock, manufacturer = :manufacturer WHERE id = :id");
         $stmt->execute([
-            'gen' => $input['generic_name'],
-            'brand_id' => $input['brand_id'],
+            'brand_name' => $input['brand_name'],
+            'strength' => $input['strength'],
+            'medicine_id' => $input['medicine_id'],
+            'category_id' => $input['category_id'],
             'price' => $input['price'],
             'stock' => $input['stock'],
+            'manufacturer' => $input['manufacturer'],
             'id' => $input['id']
         ]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'delete') {
-        $stmt = $db->prepare("DELETE FROM medicines WHERE id = :id");
+        $stmt = $db->prepare("DELETE FROM products WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
