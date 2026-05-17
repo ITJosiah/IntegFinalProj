@@ -5,7 +5,7 @@
 USE pharmasync_core;
 
 INSERT IGNORE INTO pharmacies (id, name, code, address, contact_number, is_open) VALUES
-(1, "Laurent's Pharmacy", 'laurents', 'Poblacion, Basud, Camarines Norte', '0917-111-2222', 1),
+(1, 'Laurent\'s Pharmacy', 'laurents', 'Poblacion, Basud, Camarines Norte', '0917-111-2222', 1),
 (2, 'JRMP Doctors Pharmacy', 'jrmp', 'Maharlika Highway, Basud, Camarines Norte', '0918-333-4444', 1),
 (3, 'JAS5 Pharmacy', 'jas5', 'Barangay Mangcamagong, Basud, Camarines Norte', '0919-555-6666', 1);
 
