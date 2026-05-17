@@ -129,8 +129,30 @@ $activePage = 'about';
 
             const nameInput = document.getElementById('contactName').value.trim();
             const emailInput = document.getElementById('contactEmail').value.trim();
-            const subjectInput = document.getElementById('contactSubject').value;
+            const subjectInput = document.getElementById('contactSubject').value.trim();
             const messageInput = document.getElementById('contactMessage').value.trim();
+
+            // 🌟 Error Handlings & Client-side Validations
+            if (nameInput.length < 2) {
+                alert('Error: Please enter your full name (at least 2 characters).');
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput)) {
+                alert('Error: Please enter a valid email address (e.g. name@example.com).');
+                return;
+            }
+
+            if (subjectInput.length < 3) {
+                alert('Error: Please enter a descriptive subject (at least 3 characters).');
+                return;
+            }
+
+            if (messageInput.length < 10) {
+                alert('Error: Please enter a more detailed message (at least 10 characters).');
+                return;
+            }
 
             const submitBtn = event.target.querySelector('.form-submit-btn');
             const originalBtnHTML = submitBtn.innerHTML;
@@ -168,53 +190,52 @@ $activePage = 'about';
             }
 
             // 🌟 ELEGANT DUAL INTEGRATION FLOW:
-            // Check if EmailJS key configurations are entered
-            if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
-                // Use EmailJS to dispatch a real live email!
-                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                    from_name: nameInput,
-                    from_email: emailInput,
-                    subject: subjectInput,
-                    message: messageInput
-                })
-                    .then(() => {
-                        transitionToSuccess();
-                    })
-                    .catch((err) => {
-                        alert('EmailJS failed to deliver message: ' + (err.text || JSON.stringify(err)));
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalBtnHTML;
-                    });
-            } else {
-                // Fallback seamless transition to database logs
-                const payload = {
-                    name: nameInput,
-                    email: emailInput,
-                    category: subjectInput,
-                    suggestion: messageInput
-                };
+            const payload = {
+                name: nameInput,
+                email: emailInput,
+                category: subjectInput,
+                suggestion: messageInput
+            };
 
-                fetch('api/submit_suggestion.php?action=submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.status === 'success') {
-                            transitionToSuccess();
+            // First, always save the message in the core database for local admin console visibility
+            fetch('api/submit_suggestion.php?action=submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        // If EmailJS credentials are fully set, trigger email dispatch concurrently
+                        if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
+                            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                                from_name: nameInput,
+                                from_email: emailInput,
+                                subject: subjectInput,
+                                message: messageInput
+                            })
+                            .then(() => {
+                                transitionToSuccess();
+                            })
+                            .catch((err) => {
+                                // Fallback success anyway, since it already saved in the database successfully!
+                                console.warn('EmailJS delivery warning:', err);
+                                transitionToSuccess();
+                            });
                         } else {
-                            alert('Submission error: ' + res.message);
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = originalBtnHTML;
+                            transitionToSuccess();
                         }
-                    })
-                    .catch(err => {
-                        alert('Connection error occurred while sending message.');
+                    } else {
+                        alert('Submission error: ' + res.message);
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalBtnHTML;
-                    });
-            }
+                    }
+                })
+                .catch(err => {
+                    alert('Connection error occurred while sending message.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHTML;
+                });
         }
 
         // Escape HTML helper

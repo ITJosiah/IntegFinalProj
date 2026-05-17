@@ -12,11 +12,12 @@ if (!$report || !isset($report['pharmacy_code'])) {
 }
 
 $pharmaCode = $report['pharmacy_code'];
-$medicineId = $report['medicine_id'];
-$medicineName = $report['medicine_name'];
+$medicineId = $report['medicine_id'] ?? null;
+$medicineName = $report['medicine_name'] ?? '';
 
 $qtySold = isset($report['qty_sold']) ? (int) $report['qty_sold'] : 1;
-$currentStock = (int) $report['remaining_stock'];
+$currentStock = isset($report['remaining_stock']) ? (int) $report['remaining_stock'] : 0;
+$isUpdate = isset($report['is_update']) && $report['is_update'] === true;
 
 // 1. Update Core last_sync
 $coreDB = getDBConnection('pharmasync_core');
@@ -31,10 +32,23 @@ $names = [
 ];
 $pharmaName = $names[$pharmaCode] ?? $pharmaCode;
 
-$message = "System received a report from $pharmaName: $medicineName dispensed $qtySold units. Current stock is now at $currentStock units.";
-$stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'POS_SALE', :msg)");
+if (isset($report['custom_action']) && isset($report['custom_message'])) {
+    $actionType = trim($report['custom_action']);
+    $message = trim($report['custom_message']);
+} else {
+    if ($isUpdate) {
+        $message = "System received an update from $pharmaName: $medicineName details updated. Current stock is at $currentStock units.";
+        $actionType = 'PRODUCT_UPDATE';
+    } else {
+        $message = "System received a report from $pharmaName: $medicineName dispensed $qtySold units. Current stock is now at $currentStock units.";
+        $actionType = 'POS_SALE';
+    }
+}
+
+$stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, :action_type, :msg)");
 $stmtLog->execute([
     'code' => $pharmaCode,
+    'action_type' => $actionType,
     'msg' => $message
 ]);
 

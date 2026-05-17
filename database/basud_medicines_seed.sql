@@ -9,11 +9,6 @@ INSERT IGNORE INTO pharmacies (id, name, code, address, contact_number, email, l
 (2, 'JRM DOCTORS Pharmacy', 'jrm', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0918-333-4444', 'jrm.doctors@gmail.com', 14.0712, 122.9642, 1),
 (3, 'D\' Rite Aid Generics Pharmacy', 'riteaid', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0919-555-6666', 'riteaid.pharmacy@gmail.com', 14.0725, 122.9639, 1);
 
-INSERT IGNORE INTO suggestions (id, name, email, suggestion, category, upvotes) VALUES
-(1, 'Maria Santos', 'maria.santos@gmail.com', 'Please integrate a GCash mobile payment option for seamless medicine reservations!', 'Payment', 14),
-(2, 'Anonymous Resident', '', 'Add SMS notification alerts when low-stock maintenance medicines (like Losartan or Amlodipine) are replenished.', 'Feature Request', 28),
-(3, 'Dr. Hernandez', 'jhernandez@basudhealth.org', 'The real-world Google Maps pin alignments are incredibly accurate! This saves patients so much time when finding prescriptions.', 'Feedback', 9);
-
 
 -- 2. LAURENTS PHARMACY DATA
 USE pharmacy_laurents;

@@ -3,6 +3,7 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@ session_start();
             gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
+
         .node-card {
             background: white;
             padding: 1.75rem;
@@ -28,6 +30,7 @@ session_start();
             position: relative;
             overflow: hidden;
         }
+
         .node-card::before {
             content: '';
             position: absolute;
@@ -37,25 +40,30 @@ session_start();
             height: 4px;
             background: linear-gradient(90deg, var(--primary) 0%, #3B82F6 100%);
         }
+
         .node-card.offline::before {
             background: linear-gradient(90deg, var(--danger) 0%, #EF4444 100%);
         }
+
         .node-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
             border-color: #CBD5E1;
         }
+
         .node-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
+
         .node-title {
             font-size: 1.25rem;
             font-weight: 800;
             color: var(--text-main);
         }
+
         .badge-code {
             background: #EFF6FF;
             color: var(--primary);
@@ -65,6 +73,7 @@ session_start();
             font-weight: 700;
             letter-spacing: 0.05em;
         }
+
         .node-status-row {
             display: flex;
             gap: 1rem;
@@ -72,39 +81,63 @@ session_start();
             padding-bottom: 1.25rem;
             border-bottom: 1px dashed #E2E8F0;
         }
+
         .status-indicator {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
+
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             display: inline-block;
         }
+
         .status-dot.active {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
+
         .status-dot.danger-pulse {
             animation: pulse-danger 2s infinite;
         }
+
         @keyframes pulse-danger {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
+
         .node-details {
             display: flex;
             flex-direction: column;
             gap: 0.65rem;
             margin-bottom: 1.5rem;
         }
+
         .node-detail-item {
             display: flex;
             align-items: center;
@@ -113,15 +146,18 @@ session_start();
             color: var(--text-muted);
             line-height: 1.4;
         }
+
         .node-text {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .icon-muted {
             color: #94A3B8;
             flex-shrink: 0;
         }
+
         .node-card-footer {
             font-size: 0.75rem;
             font-weight: 700;
@@ -132,13 +168,15 @@ session_start();
             border-top: 1px solid #F1F5F9;
             margin-top: auto;
         }
+
         .metric-card {
-            background: white;
+            background: #F0F7FF; /* Premium soft light blue */
             padding: 1.75rem;
             border-radius: 1rem;
-            border: 1px solid #E2E8F0;
+            border: 1px solid #D1E7FF; /* Soft blue border */
             box-shadow: var(--card-shadow);
         }
+
         .log-stream {
             background: #0F172A;
             color: #38BDF8;
@@ -149,32 +187,42 @@ session_start();
             overflow-y: auto;
             font-size: 0.85rem;
             line-height: 1.5;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
             border: 1px solid #1E293B;
         }
+
         .log-stream::-webkit-scrollbar {
             width: 8px;
         }
+
         .log-stream::-webkit-scrollbar-track {
             background: #1E293B;
             border-radius: 4px;
         }
+
         .log-stream::-webkit-scrollbar-thumb {
             background: #475569;
             border-radius: 4px;
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.php" class="brand" style="display:flex; align-items:center; gap:0.35rem;">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
                 <span><span style="color: var(--primary);">Pharma</span><span>Sync</span></span>
             </a>
             <div class="nav-links">
-                <span style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL: MIDDLEWARE ADMIN</span>
+                <span
+                    style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL:
+                    MIDDLEWARE ADMIN</span>
                 <a href="index.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
@@ -182,19 +230,32 @@ session_start();
 
     <main class="container animate-fade" style="margin-top:2rem; padding: 0 2rem;">
         <div style="text-align: center; margin-bottom: 3rem;">
-            <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">System Admin Console</h1>
-            <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">Real-time node coordination and middleware health statistics.</p>
+            <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">System
+                Admin Console</h1>
+            <p
+                style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">
+                Real-time node coordination and middleware health statistics.</p>
         </div>
 
-        <!-- Hero Connectivity Grid -->
-        <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-            Active Middleware Node Status
-        </h2>
-        <div class="nodes-grid" id="nodeContainer">
-            <!-- Dynamically populated node cards -->
-            <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #E2E8F0;">
-                Loading active node connections...
+        <!-- Hero Connectivity Grid wrapped in a premium box -->
+        <div class="metric-card" style="margin-bottom: 2.5rem; padding: 2rem; background: #F0F7FF; border: 1px solid #D1E7FF;">
+            <h2
+                style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); margin-top: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+                Active Middleware Node Status
+            </h2>
+            <div class="nodes-grid" id="nodeContainer" style="margin-bottom: 0;">
+                <!-- Dynamically populated node cards -->
+                <div
+                    style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #D1E7FF;">
+                    Loading active node connections...
+                </div>
             </div>
         </div>
 
@@ -203,10 +264,17 @@ session_start();
             <!-- Left: Audit Trails -->
             <div class="metric-card" style="display: flex; flex-direction: column;">
                 <h3 style="margin-bottom:1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    Executive Audit Ledger
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    History Logs
                 </h3>
-                <div class="table-container" style="box-shadow:none; border:1px solid #E2E8F0; flex: 1;">
+                <div class="table-container" style="box-shadow:none; border:1px solid #D1E7FF; flex: 1; max-height: 380px; overflow-y: auto; padding-right: 0.25rem; background: white;">
                     <table>
                         <thead>
                             <tr>
@@ -216,37 +284,70 @@ session_start();
                             </tr>
                         </thead>
                         <tbody id="auditTableBody">
-                            <tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Monitoring transactions...</td></tr>
+                            <tr>
+                                <td colspan="3" style="text-align:center; color:var(--text-muted);">Monitoring
+                                    transactions...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Right: Webhook Live Terminal -->
-            <div class="metric-card">
-                <h3 style="margin-bottom:0.25rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
-                    Live Webhook Payload Terminal
+            <!-- Right: Resident Inquiries Inbox -->
+            <div class="metric-card" style="display: flex; flex-direction: column;">
+                <h3 style="margin-bottom:0.25rem; font-weight:800; display:flex; align-items:center; gap:0.5rem; color: var(--text-main);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Resident Inquiries Inbox
                 </h3>
-                <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:1rem;">Real-time JSON streams coordinates from active partner nodes.</p>
-                <div class="log-stream" id="logStreamBox">
-                    [SYSTEM] Ready and waiting for middleware streams...
+                <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:1.25rem;">Live community suggestions and contact inquiries sent via the portal.</p>
+                <div style="flex: 1; overflow-y: auto; max-height: 380px; padding-right: 0.5rem;" id="suggestionInboxBox">
+                    <div style="text-align:center; padding:3rem; color:var(--text-muted); font-size: 0.9rem;">
+                        Loading suggestions inbox...
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g,
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+
+        function deleteSuggestion(id) {
+            if (confirm('Are you sure you want to dismiss this resident inquiry?')) {
+                fetch('api/submit_suggestion.php?action=delete&id=' + id)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            refreshAdminConsole();
+                        } else {
+                            alert(data.message);
+                        }
+                    });
+            }
+        }
+
         function refreshAdminConsole() {
             fetch('api/admin_metrics.php')
                 .then(res => res.json())
                 .then(data => {
-                    if(data.error) return;
+                    if (data.error) return;
 
                     // Update Nodes Grid with dynamic metadata and dual status trackings
                     let nodeHtml = '';
-                    if(!data.pharmacies || data.pharmacies.length === 0) {
-                        nodeHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #E2E8F0;">No active partner nodes registered.</div>`;
+                    if (!data.pharmacies || data.pharmacies.length === 0) {
+                        nodeHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #D1E7FF;">No active partner nodes registered.</div>`;
                     } else {
                         data.pharmacies.forEach(pharmacy => {
                             const key = pharmacy.code;
@@ -260,13 +361,7 @@ session_start();
 
                             const storeDotPulse = isStoreOpen ? "active" : "";
                             const storeIndicatorColor = isStoreOpen ? "var(--success)" : "#94A3B8";
-                            const storeText = isStoreOpen ? "STORE FRONT OPEN" : "STORE FRONT CLOSED";
-
-                            let formattedSync = 'Never Synchronized';
-                            if (pharmacy.last_sync) {
-                                const date = new Date(pharmacy.last_sync);
-                                formattedSync = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' | ' + date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
-                            }
+                            const storeText = isStoreOpen ? "STORE OPEN" : "STORE CLOSED";
 
                             const cardClass = isDbOnline ? "node-card" : "node-card offline";
 
@@ -311,7 +406,7 @@ session_start();
 
                     // Update Audit Trails
                     const auditBody = document.getElementById('auditTableBody');
-                    if(data.audit_trails.length === 0) {
+                    if (data.audit_trails.length === 0) {
                         auditBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No logs documented yet.</td></tr>`;
                     } else {
                         auditBody.innerHTML = data.audit_trails.map(item => `
@@ -323,12 +418,35 @@ session_start();
                         `).join('');
                     }
 
-                    // Update Webhook Logs Stream
-                    const streamBox = document.getElementById('logStreamBox');
-                    if(data.webhook_logs.length > 0) {
-                        streamBox.innerHTML = data.webhook_logs.map(log => {
-                            return `[${log.timestamp || 'LOGGED'}] INCOMING FROM ${log.pharmacy_code.toUpperCase()}:\n"${log.payload}"\n------------------------------------------------------------`;
-                        }).join('\n\n');
+                    // Update Suggestions Inbox
+                    const inboxBox = document.getElementById('suggestionInboxBox');
+                    if (!data.suggestions || data.suggestions.length === 0) {
+                        inboxBox.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-size:0.9rem;">No feedback or inquiries received yet.</div>`;
+                    } else {
+                        inboxBox.innerHTML = data.suggestions.map(item => {
+                            const date = new Date(item.created_at);
+                            const formattedDate = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' | ' + date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+                            return `
+                                <div style="background: white; border: 1px solid #D1E7FF; padding: 1.25rem; border-radius: 0.75rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: var(--transition);">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; gap: 1rem;">
+                                        <div style="flex-shrink: 0;">
+                                            <strong style="color: var(--text-main); font-size: 0.9rem; display: block;">${escapeHTML(item.name)}</strong>
+                                            <span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHTML(item.email)}</span>
+                                        </div>
+                                        <span style="background: #EFF6FF; color: var(--primary); font-size: 0.7rem; padding: 0.25rem 0.6rem; border-radius: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; word-break: break-word; line-height: 1.3;">${escapeHTML(item.category)}</span>
+                                    </div>
+                                    <p style="color: #475569; font-size: 0.85rem; line-height: 1.5; margin: 0.5rem 0 0.85rem; background: white; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid #F1F5F9; font-style: italic;">
+                                        "${escapeHTML(item.suggestion)}"
+                                    </p>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #E2E8F0; padding-top: 0.65rem; font-size: 0.75rem; color: var(--text-muted);">
+                                        <span>${formattedDate}</span>
+                                        <button onclick="deleteSuggestion(${item.id})" style="background: none; border: none; color: var(--danger); font-weight: 700; cursor: pointer; padding: 0; font-size:0.75rem;">
+                                            🗑️ Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
                     }
                 });
         }
@@ -338,4 +456,5 @@ session_start();
         refreshAdminConsole();
     </script>
 </body>
+
 </html>

@@ -13,15 +13,40 @@ try {
         $envelope = file_get_contents("php://input");
         $data = json_decode($envelope, true);
 
-        if (!$data || !isset($data['suggestion']) || trim($data['suggestion']) === '') {
-            echo json_encode(['status' => 'error', 'message' => 'Please provide a valid suggestion text.']);
+        if (!$data) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid or missing JSON payload.']);
             exit;
         }
 
-        $name = isset($data['name']) && trim($data['name']) !== '' ? trim($data['name']) : 'Anonymous Resident';
-        $email = isset($data['email']) ? trim($data['email']) : '';
+        if (!isset($data['name']) || trim($data['name']) === '' || strlen(trim($data['name'])) < 2) {
+            echo json_encode(['status' => 'error', 'message' => 'Your full name is required (minimum 2 characters).']);
+            exit;
+        }
+
+        if (!isset($data['email']) || trim($data['email']) === '') {
+            echo json_encode(['status' => 'error', 'message' => 'Email address is required.']);
+            exit;
+        }
+
+        if (!filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['status' => 'error', 'message' => 'Please provide a valid email address.']);
+            exit;
+        }
+
+        if (!isset($data['category']) || trim($data['category']) === '' || strlen(trim($data['category'])) < 3) {
+            echo json_encode(['status' => 'error', 'message' => 'A valid subject is required (minimum 3 characters).']);
+            exit;
+        }
+
+        if (!isset($data['suggestion']) || trim($data['suggestion']) === '' || strlen(trim($data['suggestion'])) < 10) {
+            echo json_encode(['status' => 'error', 'message' => 'A valid message body is required (minimum 10 characters).']);
+            exit;
+        }
+
+        $name = trim($data['name']);
+        $email = trim($data['email']);
         $suggestion = trim($data['suggestion']);
-        $category = isset($data['category']) && trim($data['category']) !== '' ? trim($data['category']) : 'General';
+        $category = trim($data['category']);
 
         $stmt = $db->prepare("INSERT INTO suggestions (name, email, suggestion, category, upvotes) VALUES (:name, :email, :suggestion, :category, 0)");
         $stmt->execute([
@@ -58,6 +83,19 @@ try {
         $stmt->execute(['id' => $id]);
 
         echo json_encode(['status' => 'success', 'message' => 'Upvoted successfully!']);
+        exit;
+    } elseif ($action === 'delete') {
+        // Handle administrative suggestion deletion
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid suggestion ID.']);
+            exit;
+        }
+
+        $stmt = $db->prepare("DELETE FROM suggestions WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+
+        echo json_encode(['status' => 'success', 'message' => 'Inquiry deleted successfully!']);
         exit;
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid action.']);

@@ -67,18 +67,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // --- CATEGORY CRUD ---
     if ($action === 'add_category') {
+        if (!isset($input['category_name']) || trim($input['category_name']) === '') {
+            echo json_encode(['status' => 'error', 'message' => 'Category name cannot be empty.']);
+            exit;
+        }
         $stmt = $db->prepare("INSERT INTO categories (name) VALUES (:name)");
-        $stmt->execute(['name' => $input['category_name']]);
+        $stmt->execute(['name' => trim($input['category_name'])]);
         echo json_encode(['status' => 'success', 'category_id' => $db->lastInsertId()]);
         exit;
     }
     if ($action === 'update_category') {
+        if (!isset($input['id']) || !isset($input['category_name']) || trim($input['category_name']) === '') {
+            echo json_encode(['status' => 'error', 'message' => 'Missing ID or Category name is empty.']);
+            exit;
+        }
         $stmt = $db->prepare("UPDATE categories SET name = :name WHERE id = :id");
-        $stmt->execute(['name' => $input['category_name'], 'id' => $input['id']]);
+        $stmt->execute(['name' => trim($input['category_name']), 'id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'delete_category') {
+        if (!isset($input['id'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Category ID is required.']);
+            exit;
+        }
         $stmt = $db->prepare("DELETE FROM categories WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
@@ -87,18 +99,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // --- GENERIC MEDICINE CRUD (Mapped to legacy 'brand' endpoints) ---
     if ($action === 'add_brand') {
+        if (!isset($input['brand_name']) || trim($input['brand_name']) === '') {
+            echo json_encode(['status' => 'error', 'message' => 'Generic Active Ingredient name cannot be empty.']);
+            exit;
+        }
         $stmt = $db->prepare("INSERT INTO medicines (generic_name) VALUES (:name)");
-        $stmt->execute(['name' => $input['brand_name']]);
+        $stmt->execute(['name' => trim($input['brand_name'])]);
         echo json_encode(['status' => 'success', 'brand_id' => $db->lastInsertId()]);
         exit;
     }
     if ($action === 'update_brand') {
+        if (!isset($input['id']) || !isset($input['brand_name']) || trim($input['brand_name']) === '') {
+            echo json_encode(['status' => 'error', 'message' => 'Missing ID or Generic Active Ingredient name is empty.']);
+            exit;
+        }
         $stmt = $db->prepare("UPDATE medicines SET generic_name = :name WHERE id = :id");
-        $stmt->execute(['name' => $input['brand_name'], 'id' => $input['id']]);
+        $stmt->execute(['name' => trim($input['brand_name']), 'id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'delete_brand') {
+        if (!isset($input['id'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Medicine ID is required.']);
+            exit;
+        }
         $stmt = $db->prepare("DELETE FROM medicines WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
@@ -107,36 +131,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // --- PRODUCT SKU CRUD (Mapped to legacy 'medicine' endpoints) ---
     if ($action === 'add') {
+        if (empty($input['brand_name']) || empty($input['strength']) || empty($input['medicine_id']) || empty($input['category_id']) || !isset($input['price']) || !isset($input['stock'])) {
+            echo json_encode(['status' => 'error', 'message' => 'All product details (brand name, strength, generic active ingredient, category, price, stock) are required.']);
+            exit;
+        }
+        if (floatval($input['price']) < 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Price cannot be negative.']);
+            exit;
+        }
+        if (intval($input['stock']) < 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Stock quantity cannot be negative.']);
+            exit;
+        }
+
         $stmt = $db->prepare("INSERT INTO products (brand_name, strength, medicine_id, category_id, price, stock, manufacturer) 
                               VALUES (:brand_name, :strength, :medicine_id, :category_id, :price, :stock, :manufacturer)");
         $stmt->execute([
-            'brand_name' => $input['brand_name'] ?? 'Generic',
-            'strength' => $input['strength'] ?? 'Standard',
+            'brand_name' => trim($input['brand_name']),
+            'strength' => trim($input['strength']),
             'medicine_id' => $input['medicine_id'],
             'category_id' => $input['category_id'],
-            'price' => $input['price'],
-            'stock' => $input['stock'],
-            'manufacturer' => $input['manufacturer'] ?? ''
+            'price' => floatval($input['price']),
+            'stock' => intval($input['stock']),
+            'manufacturer' => trim($input['manufacturer'] ?? '')
         ]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'update') {
+        if (!isset($input['id']) || empty($input['brand_name']) || empty($input['strength']) || empty($input['medicine_id']) || empty($input['category_id']) || !isset($input['price']) || !isset($input['stock'])) {
+            echo json_encode(['status' => 'error', 'message' => 'All product details (brand name, strength, generic active ingredient, category, price, stock) are required to update.']);
+            exit;
+        }
+        if (floatval($input['price']) < 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Price cannot be negative.']);
+            exit;
+        }
+        if (intval($input['stock']) < 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Stock quantity cannot be negative.']);
+            exit;
+        }
+
         $stmt = $db->prepare("UPDATE products SET brand_name = :brand_name, strength = :strength, medicine_id = :medicine_id, category_id = :category_id, price = :price, stock = :stock, manufacturer = :manufacturer WHERE id = :id");
         $stmt->execute([
-            'brand_name' => $input['brand_name'],
-            'strength' => $input['strength'],
+            'brand_name' => trim($input['brand_name']),
+            'strength' => trim($input['strength']),
             'medicine_id' => $input['medicine_id'],
             'category_id' => $input['category_id'],
-            'price' => $input['price'],
-            'stock' => $input['stock'],
-            'manufacturer' => $input['manufacturer'],
+            'price' => floatval($input['price']),
+            'stock' => intval($input['stock']),
+            'manufacturer' => trim($input['manufacturer']),
             'id' => $input['id']
         ]);
         echo json_encode(['status' => 'success']);
         exit;
     }
     if ($action === 'delete') {
+        if (!isset($input['id'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Product ID is required for deletion.']);
+            exit;
+        }
         $stmt = $db->prepare("DELETE FROM products WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
