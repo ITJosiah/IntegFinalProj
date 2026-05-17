@@ -31,8 +31,8 @@ try {
     ]);
 } catch (\Exception $e) {
     echo json_encode([
-        "metrics" => ["total_stock" => 0, "total_skus" => 0, "total_customers" => 0],
         "nodes" => $nodes,
+        "pharmacies" => [],
         "webhook_logs" => [],
         "audit_trails" => [],
         "error" => "Master Core Offline: " . $e->getMessage()
@@ -40,44 +40,26 @@ try {
     exit;
 }
 
-// Safely count customers
-$customers_count = 0;
+// Fetch dynamic pharmacy directory and metadata from core database
+$pharmacies_data = [];
 try {
-    $customers_count = $core_pdo->query("SELECT COUNT(*) FROM customers")->fetchColumn();
+    $pharmacies_data = $core_pdo->query("SELECT id, name, code, address, contact_number, email, is_open, last_sync FROM pharmacies ORDER BY id ASC")->fetchAll();
 } catch (\Exception $e) {
 }
 
-$total_skus = 0;
-$total_stock = 0;
-
-foreach (['pharmacy_laurents', 'pharmacy_jrm', 'pharmacy_riteaid'] as $db) {
-    if ($nodes[str_replace('pharmacy_', '', $db)] === "ONLINE") {
-        try {
-            $node_pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-            $total_skus += $node_pdo->query("SELECT COUNT(*) FROM medicines")->fetchColumn();
-            $total_stock += $node_pdo->query("SELECT SUM(stock) FROM medicines")->fetchColumn() ?: 0;
-        } catch (\Exception $e) {
-        }
-    }
-}
-
-// Safely pull logs
+// Safely pull logs using correct column 'created_at' as 'timestamp'
 $webhook_logs = [];
 $audit_trails = [];
 try {
-    $webhook_logs = $core_pdo->query("SELECT pharmacy_code, message as payload, timestamp FROM logs ORDER BY id DESC LIMIT 5")->fetchAll();
-    $audit_trails = $core_pdo->query("SELECT timestamp, pharmacy_code, message FROM logs ORDER BY id DESC LIMIT 5")->fetchAll();
+    $webhook_logs = $core_pdo->query("SELECT pharmacy_code, message as payload, created_at as timestamp FROM logs ORDER BY id DESC LIMIT 5")->fetchAll();
+    $audit_trails = $core_pdo->query("SELECT created_at as timestamp, pharmacy_code, message FROM logs ORDER BY id DESC LIMIT 5")->fetchAll();
 } catch (\Exception $e) {
 }
 
 echo json_encode([
-    "metrics" => [
-        "total_stock" => (int) $total_stock,
-        "total_skus" => (int) $total_skus,
-        "total_customers" => (int) $customers_count
-    ],
     "nodes" => $nodes,
+    "pharmacies" => $pharmacies_data,
     "webhook_logs" => $webhook_logs,
     "audit_trails" => $audit_trails
 ]);
-?>
+?>

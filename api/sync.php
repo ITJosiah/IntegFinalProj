@@ -14,8 +14,9 @@ if (!$report || !isset($report['pharmacy_code'])) {
 $pharmaCode = $report['pharmacy_code'];
 $medicineId = $report['medicine_id'];
 $medicineName = $report['medicine_name'];
-$qtySold = isset($report['qty_sold']) ? (int)$report['qty_sold'] : 1;
-$currentStock = (int)$report['remaining_stock'];
+
+$qtySold = isset($report['qty_sold']) ? (int) $report['qty_sold'] : 1;
+$currentStock = (int) $report['remaining_stock'];
 
 // 1. Update Core last_sync
 $coreDB = getDBConnection('pharmasync_core');

@@ -5,7 +5,6 @@ $navItems = [
         'home'        => ['label' => 'Home',         'href' => 'customer_dashboard.php'],
         'pharmacies'  => ['label' => 'Pharmacies',  'href' => 'customer_pharmacies.php'],
         'about'       => ['label' => 'About',       'href' => 'customer_about.php'],
-        'support'     => ['label' => 'Support',     'href' => 'customer_support.php'],
 ];
 
 // Get current page filename
@@ -16,7 +15,6 @@ $pageToNavKey = [
         'customer_dashboard.php'   => 'home',
         'customer_pharmacies.php'  => 'pharmacies',
         'customer_about.php'       => 'about',
-        'customer_support.php'     => 'support'
 ];
 
 // Determine active page
@@ -41,8 +39,8 @@ $activeNavKey = isset($pageToNavKey[$currentFile]) ? $pageToNavKey[$currentFile]
         </ul>
 
         <div class="nav-user" style="display:flex; align-items:center;">
-            <span style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL: GUEST</span>
-            <a href="index.php" class="btn-switch-role">Staff Portal</a>
+            <span style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL: CUSTOMER</span>
+            <a href="index.php" class="btn-switch-role">Logout</a>
         </div>
     </div>
 </nav>

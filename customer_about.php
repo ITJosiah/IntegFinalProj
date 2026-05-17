@@ -4,304 +4,233 @@ $activePage = 'about';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About & Technology - PharmaSync</title>
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/customer_about.css">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
+
 <body>
 
-<!-- Shared navbar -->
-<?php require_once 'includes/navbar.php'; ?>
+    <!-- Shared navbar -->
+    <?php require_once 'includes/navbar.php'; ?>
 
-<div class="layout">
-    <main class="main-content">
+    <div class="layout">
+        <main class="main-content">
+            <div class="about-container">
 
-        <!-- ── HERO HEADER SECTION ── -->
-        <section class="about-hero">
-            <p class="about-tagline">PLATFORM TECHNOLOGY & SPECS</p>
-            <h1 class="about-title">
-                Smart health-system<br>
-                <span>decentralized middleware</span>
-            </h1>
-            <p class="about-subtitle">
-                PharmaSync is a guest-friendly lookup portal serving Basud, Camarines Norte. 
-                Our platform integrates local POS inventory databases with modern API intelligence in real-time.
-            </p>
-        </section>
-
-        <!-- ── 4 SPECIFICATION CARDS ── -->
-        <section class="about-grid">
-            <div class="spec-card">
-                <div class="spec-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                </div>
-                <h3 class="spec-title">Option B Normalization</h3>
-                <p class="spec-desc">
-                    Features an advanced relational structure: active ingredients map to the parent entity (`medicines`) while commercial strength options store as child SKUs (`products`), completely eliminating redundancies.
-                </p>
-            </div>
-
-            <div class="spec-card">
-                <div class="spec-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                </div>
-                <h3 class="spec-title">Decentralized Webhook Sync</h3>
-                <p class="spec-desc">
-                    Utilizes REST middleware synchronization: transactional sales and stock counts from independent physical pharmacies trigger instant inventory updates in the master central hub database.
-                </p>
-            </div>
-
-            <div class="spec-card">
-                <div class="spec-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                </div>
-                <h3 class="spec-title">openFDA Integrations</h3>
-                <p class="spec-desc">
-                    Parallel-source search: queries both your local MySQL stock and the official US FDA database simultaneously to deliver robust clinical dosage information, warnings, and usage advice instantly.
-                </p>
-            </div>
-
-            <div class="spec-card">
-                <div class="spec-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                </div>
-                <h3 class="spec-title">Official Google Maps Embed</h3>
-                <p class="spec-desc">
-                    Features official geocoder coordinates targeting the registered business listings directly. Click locate to drop precise pins and display real directions for verified stores along the highway.
-                </p>
-            </div>
-        </section>
-
-        <!-- ── SUGGESTIONS & IMPROVEMENTS SPLIT SECTION ── -->
-        <section class="suggestion-section">
-            
-            <!-- Left Column: Submit form -->
-            <div class="glass-card">
-                <h2 class="section-title">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    Suggest Improvements
-                </h2>
-                <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1.5rem; line-height:1.5;">
-                    Help us improve our community search! Submit features you want added. Submissions are instantly visible on the public feed.
-                </p>
-
-                <form id="suggestionForm" onsubmit="submitSuggestion(event)">
-                    <div class="form-group">
-                        <label for="guestName">YOUR NAME (Optional)</label>
-                        <input type="text" id="guestName" name="name" class="form-input" placeholder="Anonymous Resident">
+                <!-- ── SPLIT LAYOUT ── -->
+                <div class="about-split-layout">
+                    <!-- Left Column: Info -->
+                    <div class="about-info-col">
+                        <section class="about-hero">
+                            <h1 class="about-title">
+                                PharmaSync <span>Basud</span>
+                            </h1>
+                            <p class="about-subtitle">
+                                PharmaSync Basud is a real-time decentralized health-system middleware designed to integrate and unify the inventories of independent local pharmacies across Poblacion, Basud, Camarines Norte.
+                            </p>
+                            <p class="about-subtitle" style="margin-top: 1rem;">
+                                By leveraging standard relational database normalization, direct Google Maps search embedding, and parallel openFDA integrations, our platform provides guest residents and local healthcare providers with seamless, instant medication searches, pharmacy directions, and critical clinical drug guidelines without requiring any registration or accounts.
+                            </p>
+                            <p class="about-subtitle" style="margin-top: 1rem;">
+                                This digital portal acts as a vital municipal utility, bridging the gap between local stock and the community during everyday needs and emergencies alike.
+                            </p>
+                        </section>
                     </div>
 
-                    <div class="form-group">
-                        <label for="guestEmail">EMAIL ADDRESS (Optional)</label>
-                        <input type="email" id="guestEmail" name="email" class="form-input" placeholder="your.email@example.com">
-                    </div>
+                    <!-- Right Column: Email Form -->
+                    <div class="about-form-col">
+                        <section class="contact-section">
+                            <div class="glass-card contact-card animate-fade">
+                                <div class="contact-header">
 
-                    <div class="form-group">
-                        <label for="suggCat">CATEGORY</label>
-                        <select id="suggCat" name="category" class="form-input" style="height: 48px;" required>
-                            <option value="General">General Suggestion</option>
-                            <option value="Feature Request">New Feature Request</option>
-                            <option value="UI/UX">UI/UX Improvement</option>
-                            <option value="Database">Database Improvement</option>
-                            <option value="Payment">Payment Options</option>
-                        </select>
-                    </div>
+                                    <h2 class="section-title" style="margin-bottom: 0.5rem; justify-content: center;">Send us a Message</h2>
+                                    <p class="contact-desc">
+                                        Have questions, suggestions, or need technical assistance? Fill out the form below to reach the support team directly.
+                                    </p>
+                                </div>
 
-                    <div class="form-group">
-                        <label for="suggText">YOUR SUGGESTION</label>
-                        <textarea id="suggText" name="suggestion" class="form-input" rows="4" placeholder="I would like to see..." required style="resize: none;"></textarea>
-                    </div>
+                                <form id="contactForm" onsubmit="submitContactForm(event)">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="contactName">YOUR NAME</label>
+                                            <input type="text" id="contactName" name="name" class="form-input"
+                                                placeholder="Enter your full name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="contactEmail">EMAIL ADDRESS</label>
+                                            <input type="email" id="contactEmail" name="email" class="form-input"
+                                                placeholder="your.email@example.com" required>
+                                        </div>
+                                    </div>
 
-                    <button type="submit" class="form-submit-btn">
-                        Submit Feature Request
-                    </button>
-                </form>
-            </div>
+                                    <div class="form-group">
+                                        <label for="contactSubject">SUBJECT</label>
+                                        <input type="text" id="contactSubject" name="subject" class="form-input"
+                                            placeholder="Enter the subject of your message" required>
+                                    </div>
 
-            <!-- Right Column: Live Board -->
-            <div>
-                <h2 class="section-title">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    Live Feature Roadmap
-                </h2>
-                
-                <div class="feed-container" id="suggestionsFeed">
-                    <!-- Suggestions will be loaded here dynamically -->
-                    <div style="text-align:center; padding:3rem; color:var(--text-muted);">
-                        Loading community feedback board...
+                                    <div class="form-group">
+                                        <label for="contactMessage">YOUR MESSAGE</label>
+                                        <textarea id="contactMessage" name="message" class="form-input" rows="5"
+                                            placeholder="Write your message here..." required style="resize: none;"></textarea>
+                                    </div>
+
+                                    <button type="submit" class="form-submit-btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                            style="margin-right: 0.4rem;">
+                                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                        </svg>
+                                        Send Message
+                                    </button>
+                                </form>
+                            </div>
+                        </section>
                     </div>
                 </div>
+
             </div>
+        </main>
+    </div>
 
-        </section>
 
-    </main>
-</div>
+    <script>
+        // ── EMAILJS CONFIGURATION ──
+        // Replace these empty strings with your actual EmailJS credentials to receive real emails in your inbox!
+        const EMAILJS_PUBLIC_KEY = "oyWQlB5lUg39oUzU4";
+        const EMAILJS_SERVICE_ID = "service_ii2z8cp";
+        const EMAILJS_TEMPLATE_ID = "template_yy49d2c";
 
-<!-- Shared footer -->
-<?php require_once 'includes/footer.php'; ?>
-
-<script>
-    // Fetch and display suggestions on page load
-    function loadSuggestions() {
-        fetch('api/get_suggestions.php')
-            .then(res => res.json())
-            .then(res => {
-                if (res.status === 'success') {
-                    displaySuggestions(res.data);
-                } else {
-                    document.getElementById('suggestionsFeed').innerHTML = `
-                        <div style="text-align:center; padding:3rem; color:var(--danger);">
-                            Failed to load board: ${res.message}
-                        </div>`;
-                }
+        if (EMAILJS_PUBLIC_KEY) {
+            emailjs.init({
+                publicKey: EMAILJS_PUBLIC_KEY,
             });
-    }
-
-    // Display list
-    function displaySuggestions(data) {
-        const feed = document.getElementById('suggestionsFeed');
-        if (data.length === 0) {
-            feed.innerHTML = `
-                <div style="text-align:center; padding:3rem; color:var(--text-muted);">
-                    No suggestions submitted yet. Be the first to share feedback!
-                </div>`;
-            return;
         }
 
-        // Get already voted IDs from localStorage
-        const votedIds = JSON.parse(localStorage.getItem('pharma_upvoted_ids') || '[]');
+        // Handle AJAX Contact Form Submission
+        function submitContactForm(event) {
+            event.preventDefault();
 
-        feed.innerHTML = data.map(item => {
-            const hasVoted = votedIds.includes(item.id.toString());
-            const activeClass = hasVoted ? 'active' : '';
-            const catClass = getCategoryClass(item.category);
-
-            return `
-                <div class="suggestion-card animate-fade" id="sugg-card-${item.id}">
-                    <div class="suggestion-content">
-                        <div class="suggestion-header">
-                            <span class="suggestion-author">${escapeHTML(item.name)}</span>
-                            <span class="suggestion-date">${item.formatted_date}</span>
-                            <span class="badge-cat ${catClass}">${escapeHTML(item.category)}</span>
-                        </div>
-                        <div class="suggestion-text">${escapeHTML(item.suggestion)}</div>
-                    </div>
-                    
-                    <div class="upvote-box ${activeClass}" onclick="upvoteSuggestion(${item.id}, this)">
-                        <span class="upvote-arrow">▲</span>
-                        <span class="upvote-count" id="upvote-count-${item.id}">${item.upvotes}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // Map categories to badges
-    function getCategoryClass(cat) {
-        switch (cat) {
-            case 'UI/UX': return 'ui';
-            case 'New Feature Request':
-            case 'Feature Request': return 'feature';
-            case 'Database': return 'database';
-            case 'Payment': return 'payment';
-            default: return 'general';
-        }
-    }
-
-    // Handle AJAX Suggestion Submission
-    function submitSuggestion(event) {
-        event.preventDefault();
-
-        // Anti-Spam Rate Limiter Check
-        const lastSubmit = sessionStorage.getItem('last_suggestion_timestamp');
-        const now = Date.now();
-        if (lastSubmit && (now - lastSubmit < 30000)) {
-            alert('Please wait 30 seconds before submitting another suggestion.');
-            return;
-        }
-
-        const nameInput = document.getElementById('guestName').value.trim();
-        const emailInput = document.getElementById('guestEmail').value.trim();
-        const categoryInput = document.getElementById('suggCat').value;
-        const suggestionInput = document.getElementById('suggText').value.trim();
-
-        const payload = {
-            name: nameInput,
-            email: emailInput,
-            category: categoryInput,
-            suggestion: suggestionInput
-        };
-
-        fetch('api/submit_suggestion.php?action=submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(res => {
-            if (res.status === 'success') {
-                sessionStorage.setItem('last_suggestion_timestamp', Date.now());
-                document.getElementById('suggestionForm').reset();
-                
-                // Show success notification & reload feed
-                alert(res.message);
-                loadSuggestions();
-            } else {
-                alert('Submission error: ' + res.message);
+            // Anti-Spam Rate Limiter Check (30 seconds)
+            const lastSubmit = sessionStorage.getItem('last_contact_timestamp');
+            const now = Date.now();
+            if (lastSubmit && (now - lastSubmit < 30000)) {
+                alert('Please wait 30 seconds before sending another message.');
+                return;
             }
-        });
-    }
 
-    // Handle LocalStorage cached upvote increment
-    function upvoteSuggestion(id, element) {
-        const stringId = id.toString();
-        let votedIds = JSON.parse(localStorage.getItem('pharma_upvoted_ids') || '[]');
+            const nameInput = document.getElementById('contactName').value.trim();
+            const emailInput = document.getElementById('contactEmail').value.trim();
+            const subjectInput = document.getElementById('contactSubject').value;
+            const messageInput = document.getElementById('contactMessage').value.trim();
 
-        // Check if already voted
-        if (votedIds.includes(stringId)) {
-            alert('You have already upvoted this suggestion!');
-            return;
+            const submitBtn = event.target.querySelector('.form-submit-btn');
+            const originalBtnHTML = submitBtn.innerHTML;
+
+            // Set loading state on button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 0.4rem; animation: spin 1s linear infinite;">
+                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                    <path d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor"></path>
+                </svg>
+                Sending...
+            `;
+
+            // Helper function to transition UI to premium success state
+            function transitionToSuccess() {
+                sessionStorage.setItem('last_contact_timestamp', Date.now());
+                const card = document.querySelector('.contact-card');
+                card.innerHTML = `
+                    <div style="text-align: center; padding: 2rem 0; animation: fadeIn 0.4s ease-out;">
+                        <div style="width: 64px; height: 64px; background: #D1FAE5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <h2 style="font-weight: 800; font-size: 1.75rem; color: var(--text-main); margin-bottom: 0.75rem;">Message Sent!</h2>
+                        <p style="color: var(--text-muted); line-height: 1.6; max-width: 440px; margin: 0 auto 2rem; font-size: 0.95rem;">
+                            Thank you, <strong style="color:var(--text-main);">${escapeHTML(nameInput)}</strong>. Your inquiry has been sent to our healthcare administration team. We will review your message and reply via email at <strong style="color:var(--primary);">${escapeHTML(emailInput)}</strong> shortly.
+                        </p>
+                        <button onclick="window.location.reload()" class="form-submit-btn" style="max-width: 220px; margin: 0 auto;">
+                            Send Another Message
+                        </button>
+                    </div>
+                `;
+            }
+
+            // 🌟 ELEGANT DUAL INTEGRATION FLOW:
+            // Check if EmailJS key configurations are entered
+            if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
+                // Use EmailJS to dispatch a real live email!
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                    from_name: nameInput,
+                    from_email: emailInput,
+                    subject: subjectInput,
+                    message: messageInput
+                })
+                    .then(() => {
+                        transitionToSuccess();
+                    })
+                    .catch((err) => {
+                        alert('EmailJS failed to deliver message: ' + (err.text || JSON.stringify(err)));
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnHTML;
+                    });
+            } else {
+                // Fallback seamless transition to database logs
+                const payload = {
+                    name: nameInput,
+                    email: emailInput,
+                    category: subjectInput,
+                    suggestion: messageInput
+                };
+
+                fetch('api/submit_suggestion.php?action=submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.status === 'success') {
+                            transitionToSuccess();
+                        } else {
+                            alert('Submission error: ' + res.message);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnHTML;
+                        }
+                    })
+                    .catch(err => {
+                        alert('Connection error occurred while sending message.');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnHTML;
+                    });
+            }
         }
 
-        // Send AJAX Upvote Request
-        fetch(`api/submit_suggestion.php?action=upvote&id=${id}`)
-            .then(res => res.json())
-            .then(res => {
-                if (res.status === 'success') {
-                    // Update LocalStorage to cache vote
-                    votedIds.push(stringId);
-                    localStorage.setItem('pharma_upvoted_ids', JSON.stringify(votedIds));
-
-                    // Update UI State instantly
-                    element.classList.add('active');
-                    const countSpan = document.getElementById(`upvote-count-${id}`);
-                    countSpan.textContent = parseInt(countSpan.textContent) + 1;
-                } else {
-                    alert('Upvote failed: ' + res.message);
-                }
-            });
-    }
-
-    // Escape HTML helper
-    function escapeHTML(str) {
-        return str.replace(/[&<>'"]/g, 
-            tag => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;'
-            }[tag] || tag)
-        );
-    }
-
-    // Initialize Feed
-    loadSuggestions();
-</script>
+        // Escape HTML helper
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g,
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+    </script>
 
 </body>
+
 </html>

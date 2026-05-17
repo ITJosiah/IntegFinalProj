@@ -9,53 +9,159 @@ session_start();
     <title>Executive Middleware Console - PharmaSync</title>
     <link rel="stylesheet" href="assets/css/index.css">
     <style>
-        .grid-3 {
+        .nodes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .node-card {
+            background: white;
+            padding: 1.75rem;
+            border-radius: 1rem;
+            border: 1px solid #E2E8F0;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .node-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, #3B82F6 100%);
+        }
+        .node-card.offline::before {
+            background: linear-gradient(90deg, var(--danger) 0%, #EF4444 100%);
+        }
+        .node-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+            border-color: #CBD5E1;
+        }
+        .node-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .node-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .badge-code {
+            background: #EFF6FF;
+            color: var(--primary);
+            padding: 0.25rem 0.6rem;
+            font-size: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .node-status-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px dashed #E2E8F0;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-dot.active {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .status-dot.danger-pulse {
+            animation: pulse-danger 2s infinite;
+        }
+        @keyframes pulse-danger {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .node-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+        }
+        .node-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .node-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .icon-muted {
+            color: #94A3B8;
+            flex-shrink: 0;
+        }
+        .node-card-footer {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94A3B8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding-top: 0.75rem;
+            border-top: 1px solid #F1F5F9;
+            margin-top: auto;
         }
         .metric-card {
             background: white;
             padding: 1.75rem;
-            border-radius: 0.75rem;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .metric-num {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: 0.5rem;
-        }
-        .node-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem;
-            background: #F8FAFC;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid #E2E8F0;
-        }
-        .status-pill {
-            padding: 0.25rem 0.75rem;
             border-radius: 1rem;
-            font-size: 0.8rem;
-            font-weight: 700;
+            border: 1px solid #E2E8F0;
+            box-shadow: var(--card-shadow);
         }
-        .status-online { background: #D1FAE5; color: #065F46; }
-        .status-offline { background: #FEE2E2; color: #991B1B; }
         .log-stream {
             background: #0F172A;
             color: #38BDF8;
             font-family: monospace;
-            padding: 1rem;
+            padding: 1.25rem;
             border-radius: 0.5rem;
-            max-height: 250px;
+            height: 380px;
             overflow-y: auto;
             font-size: 0.85rem;
-            line-height: 1.4;
+            line-height: 1.5;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+            border: 1px solid #1E293B;
+        }
+        .log-stream::-webkit-scrollbar {
+            width: 8px;
+        }
+        .log-stream::-webkit-scrollbar-track {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        .log-stream::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -75,43 +181,38 @@ session_start();
     </nav>
 
     <main class="container animate-fade" style="margin-top:2rem; padding: 0 2rem;">
-        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.25rem;">System Admin Console</h1>
-        <p style="color: var(--text-muted); margin-bottom: 2rem;">Real-time node coordination and middleware health statistics.</p>
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">System Admin Console</h1>
+            <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">Real-time node coordination and middleware health statistics.</p>
+        </div>
 
-        <div class="grid-3">
-            <div class="metric-card">
-                <div style="font-weight:700; color:var(--text-muted);">Unified Stock Volume</div>
-                <div class="metric-num" id="metricStock">...</div>
-            </div>
-            <div class="metric-card">
-                <div style="font-weight:700; color:var(--text-muted);">Active Distributed SKUs</div>
-                <div class="metric-num" id="metricSkus">...</div>
-            </div>
-            <div class="metric-card">
-                <div style="font-weight:700; color:var(--text-muted);">Registered Customer Accounts</div>
-                <div class="metric-num" id="metricCustomers">...</div>
+        <!-- Hero Connectivity Grid -->
+        <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            Active Middleware Node Status
+        </h2>
+        <div class="nodes-grid" id="nodeContainer">
+            <!-- Dynamically populated node cards -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #E2E8F0;">
+                Loading active node connections...
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:1.5rem; margin-bottom:2rem;">
-            <div class="metric-card">
-                <h3 style="margin-bottom:1rem; font-weight:700;">Node Connectivity Monitor</h3>
-                <div id="nodeContainer">
-                    <div class="node-row"><span>Laurent's Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
-                    <div class="node-row"><span>JRM DOCTORS Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
-                    <div class="node-row"><span>D' Rite Aid Generics Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
-                </div>
-            </div>
-
-            <div class="metric-card">
-                <h3 style="margin-bottom:1rem; font-weight:700;">Audit Trails</h3>
-                <div class="table-container" style="box-shadow:none; border:1px solid #E2E8F0;">
+        <!-- System Activity Row -->
+        <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap:1.5rem; margin-bottom:3rem;">
+            <!-- Left: Audit Trails -->
+            <div class="metric-card" style="display: flex; flex-direction: column;">
+                <h3 style="margin-bottom:1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Executive Audit Ledger
+                </h3>
+                <div class="table-container" style="box-shadow:none; border:1px solid #E2E8F0; flex: 1;">
                     <table>
                         <thead>
                             <tr>
-                                <th>Timestamp</th>
-                                <th>Node</th>
-                                <th>Action Details</th>
+                                <th style="width: 25%;">Timestamp</th>
+                                <th style="width: 20%;">Node</th>
+                                <th style="width: 55%;">Action Details</th>
                             </tr>
                         </thead>
                         <tbody id="auditTableBody">
@@ -120,13 +221,17 @@ session_start();
                     </table>
                 </div>
             </div>
-        </div>
 
-        <div class="metric-card" style="margin-bottom:3rem;">
-            <h3 style="margin-bottom:0.5rem; font-weight:700;">Live Webhook Connection Logs</h3>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1rem;">Real-time JSON synchronization payloads arriving from active nodes.</p>
-            <div class="log-stream" id="logStreamBox">
-                [SYSTEM] Ready and waiting for middleware streams...
+            <!-- Right: Webhook Live Terminal -->
+            <div class="metric-card">
+                <h3 style="margin-bottom:0.25rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                    Live Webhook Payload Terminal
+                </h3>
+                <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:1rem;">Real-time JSON streams coordinates from active partner nodes.</p>
+                <div class="log-stream" id="logStreamBox">
+                    [SYSTEM] Ready and waiting for middleware streams...
+                </div>
             </div>
         </div>
     </main>
@@ -138,22 +243,69 @@ session_start();
                 .then(data => {
                     if(data.error) return;
 
-                    // Update Metrics
-                    document.getElementById('metricStock').textContent = data.metrics.total_stock.toLocaleString();
-                    document.getElementById('metricSkus').textContent = data.metrics.total_skus.toLocaleString();
-                    document.getElementById('metricCustomers').textContent = data.metrics.total_customers.toLocaleString();
-
-                    // Update Nodes
-                    const names = { laurents: "Laurent's Pharmacy", jrm: "JRM DOCTORS Pharmacy", riteaid: "D' Rite Aid Generics Pharmacy" };
+                    // Update Nodes Grid with dynamic metadata and dual status trackings
                     let nodeHtml = '';
-                    for (let key in data.nodes) {
-                        const status = data.nodes[key];
-                        const pillClass = status === "ONLINE" ? "status-online" : "status-offline";
-                        nodeHtml += `
-                            <div class="node-row">
-                                <span style="font-weight:600;">${names[key]}</span>
-                                <span class="status-pill ${pillClass}">${status}</span>
-                            </div>`;
+                    if(!data.pharmacies || data.pharmacies.length === 0) {
+                        nodeHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #E2E8F0;">No active partner nodes registered.</div>`;
+                    } else {
+                        data.pharmacies.forEach(pharmacy => {
+                            const key = pharmacy.code;
+                            const dbStatus = data.nodes[key] || "OFFLINE";
+                            const isDbOnline = dbStatus === "ONLINE";
+                            const isStoreOpen = parseInt(pharmacy.is_open) === 1;
+
+                            const dbDotPulse = isDbOnline ? "active" : "danger-pulse";
+                            const dbIndicatorColor = isDbOnline ? "var(--success)" : "var(--danger)";
+                            const dbText = isDbOnline ? "DATABASE ONLINE" : "DATABASE OFFLINE";
+
+                            const storeDotPulse = isStoreOpen ? "active" : "";
+                            const storeIndicatorColor = isStoreOpen ? "var(--success)" : "#94A3B8";
+                            const storeText = isStoreOpen ? "STORE FRONT OPEN" : "STORE FRONT CLOSED";
+
+                            let formattedSync = 'Never Synchronized';
+                            if (pharmacy.last_sync) {
+                                const date = new Date(pharmacy.last_sync);
+                                formattedSync = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' | ' + date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+                            }
+
+                            const cardClass = isDbOnline ? "node-card" : "node-card offline";
+
+                            nodeHtml += `
+                                <div class="${cardClass}">
+                                    <div>
+                                        <div class="node-card-header">
+                                            <h3 class="node-title">${pharmacy.name}</h3>
+                                        </div>
+                                        
+                                        <div class="node-status-row">
+                                            <div class="status-indicator">
+                                                <span class="status-dot ${dbDotPulse}" style="background-color: ${dbIndicatorColor};"></span>
+                                                <span style="color: ${dbIndicatorColor}; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: 700;">${dbText}</span>
+                                            </div>
+                                            <div class="status-indicator">
+                                                <span class="status-dot ${storeDotPulse}" style="background-color: ${storeIndicatorColor};"></span>
+                                                <span style="color: ${storeIndicatorColor}; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: 700;">${storeText}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="node-details">
+                                            <div class="node-detail-item">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-muted"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                                <span class="node-text" title="${pharmacy.address}">${pharmacy.address}</span>
+                                            </div>
+                                            <div class="node-detail-item">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-muted"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                                <span class="node-text">${pharmacy.contact_number}</span>
+                                            </div>
+                                            <div class="node-detail-item">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-muted"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                                <span class="node-text" title="${pharmacy.email}">${pharmacy.email}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
                     }
                     document.getElementById('nodeContainer').innerHTML = nodeHtml;
 
@@ -175,7 +327,7 @@ session_start();
                     const streamBox = document.getElementById('logStreamBox');
                     if(data.webhook_logs.length > 0) {
                         streamBox.innerHTML = data.webhook_logs.map(log => {
-                            return `[${log.timestamp || 'LOGGED'}] INCOMING FROM ${log.pharmacy_code.toUpperCase()}:\n"${log.payload}"\n----------------------------------------`;
+                            return `[${log.timestamp || 'LOGGED'}] INCOMING FROM ${log.pharmacy_code.toUpperCase()}:\n"${log.payload}"\n------------------------------------------------------------`;
                         }).join('\n\n');
                     }
                 });

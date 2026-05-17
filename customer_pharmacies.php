@@ -28,7 +28,7 @@ $pharmacies = $stmt->fetchAll();
     <main class="main-content">
 
         <!-- ── HEADER SECTION ── -->
-        <section class="pharm-header" style="padding: 2rem 0 1.5rem;">
+        <section class="pharm-header" style="padding: 0.5rem 0 0.85rem;">
             <h1 class="pharm-title">Pharmacy Directory</h1>
             <p class="pharm-subtitle">
                 Find registered, authorized pharmacies in Basud, Camarines Norte. Check operational status, email, contact info, and locate them instantly.

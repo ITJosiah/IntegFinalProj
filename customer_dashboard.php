@@ -92,6 +92,8 @@ $activePage = 'home';
 <?php require_once 'includes/footer.php'; ?>
 
 <script>
+    let activeFdaResults = [];
+
     document.getElementById('searchInput').addEventListener('keypress', e => {
         if (e.key === 'Enter') searchMedications();
     });
@@ -169,16 +171,17 @@ $activePage = 'home';
             .then(r => r.ok ? r.json() : { results: [] })
             .then(data => {
                 const list = data.results || [];
+                activeFdaResults = list;
                 if (list.length > 0) {
                     let html = '';
-                    list.forEach(drug => {
+                    list.forEach((drug, index) => {
                         const brand   = drug.openfda?.brand_name?.[0] ?? 'Generic Reference';
                         const generic = drug.openfda?.generic_name?.[0] ?? query;
                         const mfr     = drug.openfda?.manufacturer_name?.[0] ?? '—';
-                        const use     = drug.indications_and_usage?.[0]?.slice(0, 200) + '…' ?? 'No indication on file.';
+                        const use     = drug.indications_and_usage?.[0] ? (drug.indications_and_usage[0].slice(0, 180) + '...') : 'No indication on file.';
 
                         html += `
-                            <div class="fda-card">
+                            <div class="fda-card" onclick="showFdaDetails(${index})">
                                 <div class="fda-card-header">
                                     <div>
                                         <p class="fda-brand">${cap(brand)}</p>
@@ -210,7 +213,136 @@ $activePage = 'home';
     function cap(str) {
         return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
     }
+
+    function formatClinicalText(text) {
+        if (!text) return 'No data';
+        
+        // Check if there are raw bullet characters or typical list markers
+        const hasBullets = /[\*•■]/.test(text) || text.includes('\n- ') || text.includes('\n* ');
+        
+        if (hasBullets) {
+            // Replace various bullet characters with ||| to split cleanly
+            let cleanedText = text
+                .replace(/[\*•■]/g, '|||')
+                .replace(/\n- /g, '|||')
+                .replace(/\n\* /g, '|||');
+                
+            const parts = cleanedText.split('|||').map(p => p.trim()).filter(p => p.length > 0);
+            
+            if (parts.length > 1) {
+                let html = `<p class="modal-intro-text">${parts[0]}</p>`;
+                html += `<ul class="modal-bullet-list">`;
+                for (let i = 1; i < parts.length; i++) {
+                    html += `<li>${parts[i]}</li>`;
+                }
+                html += `</ul>`;
+                return html;
+            }
+        }
+        
+        if (text.includes('\n')) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            return lines.map(line => `<p class="modal-para-text">${line}</p>`).join('');
+        }
+        
+        return `<p class="modal-para-text">${text}</p>`;
+    }
+
+    function showFdaDetails(index) {
+        const drug = activeFdaResults[index];
+        if (!drug) return;
+
+        const brand = drug.openfda?.brand_name?.[0] ?? 'Generic Reference';
+        const generic = drug.openfda?.generic_name?.[0] ?? 'No Generic Name';
+        const mfr = drug.openfda?.manufacturer_name?.[0] ?? '—';
+        const use = drug.indications_and_usage?.[0] ?? 'No clinical indications on file.';
+        const dosage = drug.dosage_and_administration?.[0] ?? '';
+        const warnings = drug.warnings?.[0] ?? drug.warnings_and_precautions?.[0] ?? '';
+        const active = drug.active_ingredient?.[0] ?? 'No active ingredient listed.';
+
+        document.getElementById('modalBrandName').innerText = cap(brand);
+        document.getElementById('modalGenericName').innerText = cap(generic);
+        document.getElementById('modalIndication').innerHTML = formatClinicalText(use);
+        document.getElementById('modalActive').innerHTML = formatClinicalText(active);
+        document.getElementById('modalMfr').innerHTML = formatClinicalText(mfr);
+
+        const dosageSec = document.getElementById('modalDosageSection');
+        if (dosage) {
+            document.getElementById('modalDosage').innerHTML = formatClinicalText(dosage);
+            dosageSec.style.display = 'flex';
+        } else {
+            dosageSec.style.display = 'none';
+        }
+
+        const warnSec = document.getElementById('modalWarningsSection');
+        if (warnings) {
+            document.getElementById('modalWarnings').innerHTML = formatClinicalText(warnings);
+            warnSec.style.display = 'flex';
+        } else {
+            warnSec.style.display = 'none';
+        }
+
+        const modal = document.getElementById('fdaModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFdaModal() {
+        const modal = document.getElementById('fdaModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    window.addEventListener('click', e => {
+        const modal = document.getElementById('fdaModal');
+        if (e.target === modal) {
+            closeFdaModal();
+        }
+    });
 </script>
+
+<!-- ── FDA CLINICAL DETAIL MODAL ── -->
+<div id="fdaModal" class="fda-modal">
+    <div class="fda-modal-content">
+        <div class="fda-modal-header">
+            <div>
+                <h2 id="modalBrandName" class="modal-brand">Brand Name</h2>
+                <p id="modalGenericName" class="modal-generic">Generic Name</p>
+            </div>
+            <span class="modal-close" onclick="closeFdaModal()">&times;</span>
+        </div>
+        <div class="fda-modal-body">
+            <div class="modal-section">
+                <h4 class="section-subtitle">Clinical Indications (Uses)</h4>
+                <div id="modalIndication" class="modal-text">...</div>
+            </div>
+            
+            <div id="modalDosageSection" class="modal-section">
+                <h4 class="section-subtitle">Dosage & Administration</h4>
+                <div id="modalDosage" class="modal-text">...</div>
+            </div>
+
+            <div id="modalWarningsSection" class="modal-section">
+                <h4 class="section-subtitle">Warnings & Precautions</h4>
+                <div id="modalWarnings" class="modal-text">...</div>
+            </div>
+
+            <div class="modal-section-grid">
+                <div class="modal-section">
+                    <h4 class="section-subtitle">Active Ingredients</h4>
+                    <div id="modalActive" class="modal-text">...</div>
+                </div>
+                <div class="modal-section">
+                    <h4 class="section-subtitle">Manufacturer / Lab</h4>
+                    <div id="modalMfr" class="modal-text">...</div>
+                </div>
+            </div>
+        </div>
+        <div class="fda-modal-footer" style="justify-content: center;">
+            <span class="fda-badge">✓ FDA APPROVED REFERENCE</span>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
