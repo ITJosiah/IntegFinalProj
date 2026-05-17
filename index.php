@@ -9,18 +9,15 @@ if (isset($_GET['role'])) {
         header('Location: admin_dashboard.php');
         exit;
     } elseif ($role === 'customer') {
-        $_SESSION['user_role'] = 'customer';
-        $_SESSION['user_id'] = 1;
-        $_SESSION['user_name'] = 'Alex';
         header('Location: customer_dashboard.php');
         exit;
-    } elseif (in_array($role, ['laurents', 'jrmp', 'jas5'])) {
+    } elseif (in_array($role, ['laurents', 'jrm', 'riteaid'])) {
         $_SESSION['user_role'] = 'pharmacy';
         $_SESSION['pharma_code'] = $role;
         $names = [
             'laurents' => "Laurent's Pharmacy",
-            'jrmp' => "JRMP Doctors Pharmacy",
-            'jas5' => "JAS5 Pharmacy"
+            'jrm' => "JRM DOCTORS Pharmacy",
+            'riteaid' => "D' Rite Aid Generics Pharmacy"
         ];
         $_SESSION['user_name'] = $names[$role];
         header('Location: pharmacy_dashboard.php?pharma=' . $role);
@@ -100,14 +97,14 @@ if (isset($_GET['role'])) {
             <div class="btn-group">
                 <a href="index.php?role=admin" class="btn btn-outline" style="width:100%; padding: 1rem; font-size: 1.1rem; text-decoration: none; justify-content: center;">Admin Portal</a>
                 
-                <a href="index.php?role=customer" class="btn btn-outline" style="width:100%; padding: 1rem; font-size: 1.1rem; text-decoration: none; justify-content: center;">Customer Portal</a>
+                <a href="customer_dashboard.php" class="btn btn-outline" style="width:100%; padding: 1rem; font-size: 1.1rem; text-decoration: none; justify-content: center;">Customer Portal</a>
 
                 <button onclick="togglePharmaButtons()" class="btn btn-primary" style="width:100%; padding: 1rem; font-size: 1.1rem; justify-content: center;">Pharmacy Portals ▼</button>
 
                 <div id="pharmaButtons" class="pharma-group">
                     <a href="index.php?role=laurents" class="btn btn-secondary" style="justify-content: center;">Laurent's Pharmacy</a>
-                    <a href="index.php?role=jrmp" class="btn btn-secondary" style="justify-content: center;">JRMP Doctors Pharmacy</a>
-                    <a href="index.php?role=jas5" class="btn btn-secondary" style="justify-content: center;">JAS5 Pharmacy</a>
+                    <a href="index.php?role=jrm" class="btn btn-secondary" style="justify-content: center;">JRM DOCTORS Pharmacy</a>
+                    <a href="index.php?role=riteaid" class="btn btn-secondary" style="justify-content: center;">D' Rite Aid Generics Pharmacy</a>
                 </div>
             </div>
         </div>

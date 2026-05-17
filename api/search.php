@@ -15,8 +15,8 @@ while ($row = $stmt->fetch()) {
 
 $dbs = [
     'laurents' => 'pharmacy_laurents',
-    'jrmp' => 'pharmacy_jrmp',
-    'jas5' => 'pharmacy_jas5'
+    'jrm' => 'pharmacy_jrm',
+    'riteaid' => 'pharmacy_riteaid'
 ];
 
 foreach ($dbs as $code => $dbName) {

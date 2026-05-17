@@ -1,9 +1,6 @@
 <?php
-// ── 1. Shared session logic ──
-require_once 'includes/session_guard.php';
+// ── 1. Shared db connection ──
 require_once 'api/config/db.php';
-
-/** @var string $greeting Provided by includes/session_guard.php */
 
 // ── 2. Set active nav tab for this page ──
 $activePage = 'pharmacies';

@@ -1,8 +1,4 @@
 <?php
-require_once 'includes/session_guard.php';
-
-/** @var string $greeting Provided by includes/session_guard.php */
-
 $activePage = 'home';
 ?>
 <!DOCTYPE html>

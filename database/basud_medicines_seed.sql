@@ -6,8 +6,13 @@ USE pharmasync_core;
 
 INSERT IGNORE INTO pharmacies (id, name, code, address, contact_number, email, latitude, longitude, is_open) VALUES
 (1, 'Laurent\'s Pharmacy', 'laurents', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0917-111-2222', 'laurents.pharmacy@gmail.com', 14.0700, 122.9645, 1),
-(2, 'JRM DOCTORS Pharmacy', 'jrmp', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0918-333-4444', 'jrmp.doctors@gmail.com', 14.0712, 122.9642, 1),
-(3, 'D\' Rite Aid Generics Pharmacy', 'jas5', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0919-555-6666', 'jas5.pharmacy@gmail.com', 14.0725, 122.9639, 1);
+(2, 'JRM DOCTORS Pharmacy', 'jrm', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0918-333-4444', 'jrm.doctors@gmail.com', 14.0712, 122.9642, 1),
+(3, 'D\' Rite Aid Generics Pharmacy', 'riteaid', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0919-555-6666', 'riteaid.pharmacy@gmail.com', 14.0725, 122.9639, 1);
+
+INSERT IGNORE INTO suggestions (id, name, email, suggestion, category, upvotes) VALUES
+(1, 'Maria Santos', 'maria.santos@gmail.com', 'Please integrate a GCash mobile payment option for seamless medicine reservations!', 'Payment', 14),
+(2, 'Anonymous Resident', '', 'Add SMS notification alerts when low-stock maintenance medicines (like Losartan or Amlodipine) are replenished.', 'Feature Request', 28),
+(3, 'Dr. Hernandez', 'jhernandez@basudhealth.org', 'The real-world Google Maps pin alignments are incredibly accurate! This saves patients so much time when finding prescriptions.', 'Feedback', 9);
 
 
 -- 2. LAURENTS PHARMACY DATA
@@ -48,8 +53,8 @@ INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id,
 (11, 'Benadryl AH', '25mg', 11, 3, 'J&J', 12.00, 95);
 
 
--- 3. JRMP DOCTORS PHARMACY DATA
-USE pharmacy_jrmp;
+-- 3. JRM DOCTORS PHARMACY DATA
+USE pharmacy_jrm;
 
 INSERT IGNORE INTO categories (id, name) VALUES
 (1, 'Fever & Pain Relief'),
@@ -86,8 +91,8 @@ INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id,
 (11, 'Robitussin DM', 'Standard', 10, 4, 'Pfizer', 135.00, 35);
 
 
--- 4. JAS5 PHARMACY DATA
-USE pharmacy_jas5;
+-- 4. D' RITE AID GENERICS PHARMACY DATA
+USE pharmacy_riteaid;
 
 INSERT IGNORE INTO categories (id, name) VALUES
 (1, 'Fever & Pain Relief'),

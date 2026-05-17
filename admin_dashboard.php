@@ -98,8 +98,8 @@ session_start();
                 <h3 style="margin-bottom:1rem; font-weight:700;">Node Connectivity Monitor</h3>
                 <div id="nodeContainer">
                     <div class="node-row"><span>Laurent's Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
-                    <div class="node-row"><span>JRMP Doctors Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
-                    <div class="node-row"><span>JAS5 Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
+                    <div class="node-row"><span>JRM DOCTORS Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
+                    <div class="node-row"><span>D' Rite Aid Generics Pharmacy</span><span class="status-pill status-offline">LOADING</span></div>
                 </div>
             </div>
 
@@ -144,7 +144,7 @@ session_start();
                     document.getElementById('metricCustomers').textContent = data.metrics.total_customers.toLocaleString();
 
                     // Update Nodes
-                    const names = { laurents: "Laurent's Pharmacy", jrmp: "JRMP Doctors Pharmacy", jas5: "JAS5 Pharmacy" };
+                    const names = { laurents: "Laurent's Pharmacy", jrm: "JRM DOCTORS Pharmacy", riteaid: "D' Rite Aid Generics Pharmacy" };
                     let nodeHtml = '';
                     for (let key in data.nodes) {
                         const status = data.nodes[key];

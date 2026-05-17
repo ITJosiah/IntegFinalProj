@@ -5,8 +5,8 @@ $_SESSION['pharma_code'] = $pharma;
 
 $names = [
     'laurents' => "Laurent's Pharmacy",
-    'jrmp' => "JRM DOCTORS Pharmacy",
-    'jas5' => "D' Rite Aid Generics Pharmacy"
+    'jrm' => "JRM DOCTORS Pharmacy",
+    'riteaid' => "D' Rite Aid Generics Pharmacy"
 ];
 $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 ?>

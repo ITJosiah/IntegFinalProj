@@ -25,8 +25,8 @@ $stmt->execute(['code' => $pharmaCode]);
 // 2. Log transaction
 $names = [
     'laurents' => "Laurent's Pharmacy",
-    'jrmp' => "JRMP Doctors Pharmacy",
-    'jas5' => "JAS5 Pharmacy"
+    'jrm' => "JRM DOCTORS Pharmacy",
+    'riteaid' => "D' Rite Aid Generics Pharmacy"
 ];
 $pharmaName = $names[$pharmaCode] ?? $pharmaCode;
 
@@ -40,8 +40,8 @@ $stmtLog->execute([
 // 3. Ensure local pharmacy DB is synced
 $dbs = [
     'laurents' => 'pharmacy_laurents',
-    'jrmp' => 'pharmacy_jrmp',
-    'jas5' => 'pharmacy_jas5'
+    'jrm' => 'pharmacy_jrm',
+    'riteaid' => 'pharmacy_riteaid'
 ];
 if (isset($dbs[$pharmaCode])) {
     $db = getDBConnection($dbs[$pharmaCode]);
