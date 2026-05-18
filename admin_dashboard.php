@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    header('Location: index.php?error=unauthorized');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -222,8 +226,8 @@ session_start();
             <div class="nav-links">
                 <span
                     style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL:
-                    MIDDLEWARE ADMIN</span>
-                <a href="index.php" class="btn-switch-role">Logout</a>
+                    <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                <a href="logout.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
     </nav>

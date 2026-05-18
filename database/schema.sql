@@ -9,6 +9,8 @@ USE pharmasync_core;
 CREATE TABLE IF NOT EXISTS pharmacies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
     code VARCHAR(20) NOT NULL UNIQUE,
     address VARCHAR(255) NOT NULL,
     contact_number VARCHAR(50),
@@ -34,6 +36,14 @@ CREATE TABLE IF NOT EXISTS suggestions (
     suggestion TEXT NOT NULL,
     category VARCHAR(50) DEFAULT 'General',
     upvotes INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

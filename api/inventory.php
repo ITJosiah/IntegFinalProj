@@ -1,9 +1,25 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once 'config/db.php';
 header('Content-Type: application/json');
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 $pharma = isset($_GET['pharma']) ? $_GET['pharma'] : '';
+
+// Session security check: Only allow access to the inventory if:
+// 1. The user is an administrator
+// 2. The user is a pharmacy AND their pharmacy code matches the requested pharmacy
+if (!isset($_SESSION['user_role']) || 
+    ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'pharmacy') || 
+    ($_SESSION['user_role'] === 'pharmacy' && $_SESSION['pharma_code'] !== $pharma)) {
+    
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access. Authentication is required.']);
+    exit;
+}
 
 $dbs = [
     'laurents' => 'pharmacy_laurents',

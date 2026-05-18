@@ -1,5 +1,16 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 header("Content-Type: application/json");
+
+// Session security check: Only administrators can access admin metrics
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized access. Administrator session required.']);
+    exit;
+}
 
 $host = 'localhost';
 $user = 'root';

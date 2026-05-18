@@ -4,10 +4,13 @@
 -- 1. CORE PHARMACY NODES
 USE pharmasync_core;
 
-INSERT IGNORE INTO pharmacies (id, name, code, address, contact_number, email, latitude, longitude, is_open) VALUES
-(1, 'Laurent\'s Pharmacy', 'laurents', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0917-111-2222', 'laurents.pharmacy@gmail.com', 14.0700, 122.9645, 1),
-(2, 'JRM DOCTORS Pharmacy', 'jrm', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0918-333-4444', 'jrm.doctors@gmail.com', 14.0712, 122.9642, 1),
-(3, 'D\' Rite Aid Generics Pharmacy', 'riteaid', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0919-555-6666', 'riteaid.pharmacy@gmail.com', 14.0725, 122.9639, 1);
+INSERT IGNORE INTO pharmacies (id, name, username, password_hash, code, address, contact_number, email, latitude, longitude, is_open) VALUES
+(1, 'Laurent\'s Pharmacy', 'laurents', '$2y$10$BPb1YJOCljVGvy9mJzaWS.KsS1M9aLn7ihKeCKisLauVDjPviz7z6', 'laurents', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0917-111-2222', 'laurents.pharmacy@gmail.com', 14.0700, 122.9645, 1),
+(2, 'JRM DOCTORS Pharmacy', 'jrm', '$2y$10$lxVa34BT93CrS36lyGbqyeIVNbVbdwTlGiLDZOPewmwWqtvgTm5P.', 'jrm', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0918-333-4444', 'jrm.doctors@gmail.com', 14.0712, 122.9642, 1),
+(3, 'D\' Rite Aid Generics Pharmacy', 'riteaid', '$2y$10$A9K7oTZaZKArH3l.ELo5YOiwFDTJRNILaGE86MIuglTG6JQH1w7pG', 'riteaid', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0919-555-6666', 'riteaid.pharmacy@gmail.com', 14.0725, 122.9639, 1);
+
+INSERT IGNORE INTO admins (id, username, password_hash, name) VALUES
+(1, 'admin', '$2y$10$cw8Nz4vza4.JnGyTuCWrFuPNs9/FZBq2nNGSqs2osq1vxYJotYo.W', 'Josiah Luke (Admin)');
 
 
 -- 2. LAURENTS PHARMACY DATA

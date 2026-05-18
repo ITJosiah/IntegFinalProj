@@ -85,6 +85,16 @@ try {
         echo json_encode(['status' => 'success', 'message' => 'Upvoted successfully!']);
         exit;
     } elseif ($action === 'delete') {
+        // Enforce administrative session check
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Unauthorized action. Admin authentication is required.']);
+            exit;
+        }
+
         // Handle administrative suggestion deletion
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id <= 0) {

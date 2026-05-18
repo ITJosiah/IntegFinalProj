@@ -1,6 +1,18 @@
 <?php
-session_start();
-$pharma = isset($_GET['pharma']) ? $_GET['pharma'] : (isset($_SESSION['pharma_code']) ? $_SESSION['pharma_code'] : 'laurents');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$pharma = isset($_GET['pharma']) ? trim($_GET['pharma']) : (isset($_SESSION['pharma_code']) ? $_SESSION['pharma_code'] : 'laurents');
+
+// Enforce session security checks
+if (!isset($_SESSION['user_role']) || 
+    ($_SESSION['user_role'] !== 'pharmacy' && $_SESSION['user_role'] !== 'admin') || 
+    ($_SESSION['user_role'] === 'pharmacy' && $_SESSION['pharma_code'] !== $pharma)) {
+    header('Location: index.php?error=unauthorized');
+    exit;
+}
+
 $_SESSION['pharma_code'] = $pharma;
 
 $names = [
@@ -90,7 +102,7 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                 <span
                     style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL:
                     <?php echo htmlspecialchars($pharmaName); ?></span>
-                <a href="index.php" class="btn-switch-role">Logout</a>
+                <a href="logout.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
     </nav>
