@@ -83,6 +83,120 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             display: block;
         }
 
+        /* ── DASHBOARD TAB STYLES ── */
+        .dashboard-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-metric-card {
+            background: white;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: var(--transition);
+        }
+
+        .dashboard-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-color: #CBD5E1;
+        }
+
+        .metric-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .dashboard-details-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .dashboard-detail-box {
+            background: white;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .top-selling-bar-wrapper {
+            margin-bottom: 0.75rem;
+        }
+
+        .top-selling-item-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .top-selling-bar-outer {
+            height: 6px;
+            background: #F1F5F9;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .top-selling-bar-inner {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.6s ease-in-out;
+        }
+
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: #FAFBFD;
+        }
+
+        .watchlist-item.critical {
+            border-color: #FCA5A5;
+            background: #FFF5F5;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-details-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* ── POS SYSTEM STYLES ── */
         .pos-layout {
             display: grid;
@@ -603,60 +717,154 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
         <!-- ERP Tabs Navigation -->
         <div class="erp-tabs">
-            <button class="erp-tab-btn active" onclick="switchTab('pos', event)">Point of Sale</button>
+            <button class="erp-tab-btn active" onclick="switchTab('dashboard', event)">Dashboard</button>
+            <button class="erp-tab-btn" onclick="switchTab('pos', event)">Point of Sale</button>
             <button class="erp-tab-btn" onclick="switchTab('medicines', event)">Branded Products</button>
             <button class="erp-tab-btn" onclick="switchTab('brands', event)">Generics Dictionary</button>
             <button class="erp-tab-btn" onclick="switchTab('categories', event)">Categories</button>
             <button class="erp-tab-btn" onclick="switchTab('logs', event)">History / Logs</button>
+        </div>
 
-            <!-- Dynamic Search & Action Controls on the Right -->
-            <div class="erp-tab-controls-container"
-                style="margin-left: auto; display: flex; align-items: center; margin-bottom: 8px;">
-                <!-- Controls for POS -->
-                <div id="controls_pos" class="erp-tab-control-group"
-                    style="display: flex; gap: 0.75rem; align-items: center;">
+        <!-- ================= TAB: DASHBOARD ================= -->
+        <div id="tab_dashboard" class="tab-content active animate-fade">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
+                <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin: 0;">Performance Overview</h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Period:</label>
+                    <select id="dashPeriodSelect" onchange="loadDashboardMetrics(this.value)" style="padding: 0.5rem 1.5rem 0.5rem 0.75rem; border: 1.5px solid var(--border-color); border-radius: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-main); outline: none; background: white; cursor: pointer; min-width: 140px;">
+                        <option value="today" selected>Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="weekly">This Week</option>
+                        <option value="monthly">This Month</option>
+                        <option value="yearly">This Year</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Analytics Cards Grid -->
+            <div class="dashboard-metrics-grid">
+                <!-- Revenue Card -->
+                <div class="dashboard-metric-card">
+                    <div class="metric-icon-wrapper" style="background: #EFF6FF; color: var(--primary);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-label" id="lbl_revenue">Today's Revenue</div>
+                        <div class="metric-value" id="metric_revenue">₱0.00</div>
+                    </div>
                 </div>
 
-                <!-- Controls for Medicines -->
-                <div id="controls_medicines" class="erp-tab-control-group"
-                    style="display: none; gap: 0.75rem; align-items: center;">
-                    <input type="text" onkeyup="filterSpecificTable('medTableBody', this.value)"
-                        placeholder="🔍 Search products..." class="form-input"
-                        style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
-                    <button onclick="openModal('medicineModal')" class="btn btn-primary">Add Product</button>
+                <!-- Transactions Card -->
+                <div class="dashboard-metric-card">
+                    <div class="metric-icon-wrapper" style="background: #ECFDF5; color: #10B981;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-label" id="lbl_sales_count">Today's Sales</div>
+                        <div class="metric-value" id="metric_sales_count">0 Txns</div>
+                    </div>
                 </div>
 
-                <!-- Controls for Brands -->
-                <div id="controls_brands" class="erp-tab-control-group"
-                    style="display: none; gap: 0.75rem; align-items: center;">
-                    <input type="text" onkeyup="filterSpecificTable('brandTableBody', this.value)"
-                        placeholder="🔍 Search ingredients..." class="form-input"
-                        style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
-                    <button onclick="openModal('brandModal')" class="btn btn-primary">Add Generic</button>
+                <!-- Registered SKUs Card -->
+                <div class="dashboard-metric-card">
+                    <div class="metric-icon-wrapper" style="background: #F5F3FF; color: #8B5CF6;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-label">Active SKUs</div>
+                        <div class="metric-value" id="metric_total_skus">0</div>
+                    </div>
                 </div>
 
-                <!-- Controls for Categories -->
-                <div id="controls_categories" class="erp-tab-control-group"
-                    style="display: none; gap: 0.75rem; align-items: center;">
-                    <input type="text" onkeyup="filterSpecificTable('catTableBody', this.value)"
-                        placeholder="🔍 Search categories..." class="form-input"
-                        style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
-                    <button onclick="openModal('categoryModal')" class="btn btn-primary">Add Category</button>
+                <!-- Stock Alert Card -->
+                <div class="dashboard-metric-card">
+                    <div class="metric-icon-wrapper" id="stock_alert_icon_wrapper" style="background: #FEF2F2; color: #EF4444;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-label">Stock Warnings</div>
+                        <div class="metric-value" id="metric_stock_warnings" style="font-size: 0.95rem; font-weight: 700; color: #EF4444;">
+                            <span id="out_of_stock_badge">0 Out</span> / <span id="low_stock_badge">0 Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Layout for lists -->
+            <div class="dashboard-details-row">
+                <!-- Left Column: Recent Sales Activity -->
+                <div class="dashboard-detail-box">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Recent POS Transactions
+                    </h3>
+                    <div class="table-container" style="border: 1px solid var(--border-color); max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%;">Time</th>
+                                    <th style="width: 30%;">Receipt No</th>
+                                    <th style="width: 20%;">Total</th>
+                                    <th style="width: 25%;">Items</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashRecentSalesBody">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading transactions...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- Controls for Logs -->
-                <div id="controls_logs" class="erp-tab-control-group"
-                    style="display: none; gap: 0.75rem; align-items: center;">
-                    <input type="text" id="logsSearch" onkeyup="filterSpecificTable('logsTableBody', this.value)"
-                        placeholder="🔍 Search logs..." class="form-input"
-                        style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
-                    <button onclick="loadLogs()" class="btn btn-outline">Refresh Logs</button>
+                <!-- Right Column: Top Products & Stock Watchlist -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Top Selling Products -->
+                    <div class="dashboard-detail-box" style="flex: 1;">
+                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            Top Selling Products
+                        </h3>
+                        <div id="dashTopProductsList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="text-align: center; color: var(--text-muted); padding: 1rem;">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- Low Stock watchlist -->
+                    <div class="dashboard-detail-box" style="flex: 1;">
+                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Stock Watchlist (Low Stock)
+                        </h3>
+                        <div id="dashStockWatchlist" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="text-align: center; color: var(--text-muted); padding: 1rem;">Loading...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- ================= TAB 0: POINT OF SALE ================= -->
-        <div id="tab_pos" class="tab-content active animate-fade">
+        <div id="tab_pos" class="tab-content animate-fade">
             <div class="pos-layout">
                 <!-- Left: Product Grid -->
                 <div>
@@ -724,6 +932,15 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
         <!-- ================= TAB 1: PRODUCTS SKU ================= -->
         <div id="tab_medicines" class="tab-content animate-fade">
+            <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap;">
+                <div class="pos-search-box" style="margin-bottom: 0; width: 300px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" onkeyup="filterSpecificTable('medTableBody', this.value)" placeholder="Search products...">
+                </div>
+                <button onclick="openModal('medicineModal')" class="btn btn-primary">Add Product</button>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -746,6 +963,15 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
         <!-- ================= TAB 2: GENERICS ================= -->
         <div id="tab_brands" class="tab-content animate-fade">
+            <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap;">
+                <div class="pos-search-box" style="margin-bottom: 0; width: 300px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" onkeyup="filterSpecificTable('brandTableBody', this.value)" placeholder="Search ingredients...">
+                </div>
+                <button onclick="openModal('brandModal')" class="btn btn-primary">Add Generic</button>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -765,7 +991,17 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
         </div>
 
         <!-- ================= TAB 3: CATEGORIES ================= -->
+        <!-- ================= TAB 3: CATEGORIES ================= -->
         <div id="tab_categories" class="tab-content animate-fade">
+            <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap;">
+                <div class="pos-search-box" style="margin-bottom: 0; width: 300px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" onkeyup="filterSpecificTable('catTableBody', this.value)" placeholder="Search categories...">
+                </div>
+                <button onclick="openModal('categoryModal')" class="btn btn-primary">Add Category</button>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -785,7 +1021,17 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
         </div>
 
         <!-- ================= TAB 4: LOGS ================= -->
+        <!-- ================= TAB 4: LOGS ================= -->
         <div id="tab_logs" class="tab-content animate-fade">
+            <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap;">
+                <div class="pos-search-box" style="margin-bottom: 0; width: 300px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="logsSearch" onkeyup="filterSpecificTable('logsTableBody', this.value)" placeholder="Search logs...">
+                </div>
+                <button onclick="loadLogs()" class="btn btn-outline">Refresh Logs</button>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -891,6 +1137,7 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
         let currentMedicinesList = [];
         let currentBrandsList = [];
         let currentCategoriesList = [];
+        let storeIsOpen = true;
 
         function switchTab(tabId, e) {
             document.querySelectorAll('.erp-tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -906,13 +1153,8 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
             document.getElementById('tab_' + tabId).classList.add('active');
 
-            // Switch the dynamic control groups on the right
-            document.querySelectorAll('.erp-tab-control-group').forEach(group => {
-                group.style.display = 'none';
-            });
-            const activeControl = document.getElementById('controls_' + tabId);
-            if (activeControl) {
-                activeControl.style.display = 'flex';
+            if (tabId === 'dashboard') {
+                loadDashboardMetrics();
             }
         }
 
@@ -962,7 +1204,8 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                     currentCategoriesList = data.categories; // Categories
 
                     const statusBtn = document.getElementById('toggleStatusBtn');
-                    if (data.is_open == 1) {
+                    storeIsOpen = (data.is_open == 1);
+                    if (storeIsOpen) {
                         statusBtn.innerHTML = `Store Status: <span style="color:#10B981;font-weight:bold;">OPEN</span>`;
                     } else {
                         statusBtn.innerHTML = `Store Status: <span style="color:#EF4444;font-weight:bold;">CLOSED</span>`;
@@ -1072,13 +1315,143 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                             catBody.appendChild(tr);
                         });
                     }
+                    loadDashboardMetrics();
+                });
+        }
+
+        function loadDashboardMetrics(period) {
+            if (!period) {
+                const periodSelect = document.getElementById('dashPeriodSelect');
+                period = periodSelect ? periodSelect.value : 'today';
+            }
+            
+            fetch(`api/pharmacy_metrics.php?pharma=${pharmaCode}&period=${period}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const metrics = data.metrics;
+                        
+                        // Update labels based on period selection
+                        let periodLabel = "Today's";
+                        if (period === 'yesterday') periodLabel = "Yesterday's";
+                        else if (period === 'weekly') periodLabel = "Weekly";
+                        else if (period === 'monthly') periodLabel = "Monthly";
+                        else if (period === 'yearly') periodLabel = "Yearly";
+                        
+                        const lblRev = document.getElementById('lbl_revenue');
+                        if (lblRev) lblRev.textContent = periodLabel + " Revenue";
+                        
+                        const lblSales = document.getElementById('lbl_sales_count');
+                        if (lblSales) lblSales.textContent = periodLabel + " Sales";
+                        
+                        // 1. Update metric cards
+                        document.getElementById('metric_revenue').textContent = '₱' + parseFloat(metrics.revenue_today).toFixed(2);
+                        document.getElementById('metric_sales_count').textContent = metrics.txns_today + ' Txn' + (metrics.txns_today !== 1 ? 's' : '');
+                        document.getElementById('metric_total_skus').textContent = metrics.total_skus;
+                        
+                        document.getElementById('out_of_stock_badge').textContent = metrics.out_of_stock + ' Out';
+                        document.getElementById('low_stock_badge').textContent = metrics.low_stock + ' Low';
+                        
+                        const alertWrapper = document.getElementById('stock_alert_icon_wrapper');
+                        const stockWarningsVal = document.getElementById('metric_stock_warnings');
+                        if (metrics.out_of_stock > 0) {
+                            alertWrapper.style.background = '#FEE2E2';
+                            alertWrapper.style.color = '#EF4444';
+                            stockWarningsVal.style.color = '#EF4444';
+                        } else if (metrics.low_stock > 0) {
+                            alertWrapper.style.background = '#FEF3C7';
+                            alertWrapper.style.color = '#F59E0B';
+                            stockWarningsVal.style.color = '#D97706';
+                        } else {
+                            alertWrapper.style.background = '#D1FAE5';
+                            alertWrapper.style.color = '#10B981';
+                            stockWarningsVal.style.color = '#059669';
+                        }
+
+                        // 2. Render Recent Sales Table
+                        const salesBody = document.getElementById('dashRecentSalesBody');
+                        if (data.recent_sales.length === 0) {
+                            salesBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No transactions recorded today.</td></tr>';
+                        } else {
+                            salesBody.innerHTML = data.recent_sales.map(sale => {
+                                const date = new Date(sale.created_at);
+                                const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' | ' + date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+                                return `
+                                    <tr>
+                                        <td style="font-size:0.82rem; color:var(--text-muted);">${timeStr}</td>
+                                        <td style="font-family: monospace; font-size:0.82rem; font-weight:700; color:var(--primary);">${sale.receipt_no}</td>
+                                        <td style="font-weight:700;">₱${parseFloat(sale.total_amount).toFixed(2)}</td>
+                                        <td style="font-size:0.82rem; color:var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;" title="${sale.items_summary || ''}">${sale.items_summary || 'No details'}</td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+
+                        // 3. Render Top Selling Products list
+                        const topProdContainer = document.getElementById('dashTopProductsList');
+                        if (data.top_selling.length === 0) {
+                            topProdContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 1.5rem; font-size: 0.85rem;">No sales recorded yet.</div>';
+                        } else {
+                            const maxQty = data.top_selling.reduce((max, item) => Math.max(max, parseInt(item.total_qty)), 1);
+                            
+                            topProdContainer.innerHTML = data.top_selling.map(item => {
+                                const qty = parseInt(item.total_qty);
+                                const pct = Math.round((qty / maxQty) * 100);
+                                const revenue = parseFloat(item.total_revenue).toFixed(2);
+                                return `
+                                    <div class="top-selling-bar-wrapper">
+                                        <div class="top-selling-item-header">
+                                            <span>${item.product_name}</span>
+                                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">
+                                                <strong>${qty} sold</strong> (₱${revenue})
+                                            </span>
+                                        </div>
+                                        <div class="top-selling-bar-outer">
+                                            <div class="top-selling-bar-inner" style="width: ${pct}%;"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+
+                        // 4. Render Stock Watchlist
+                        const watchlistContainer = document.getElementById('dashStockWatchlist');
+                        if (data.low_stock_list.length === 0) {
+                            watchlistContainer.innerHTML = '<div style="text-align: center; color: var(--success); font-weight: 600; padding: 1.5rem; font-size: 0.85rem; background: #D1FAE5; border-radius: 0.5rem;">All products are well stocked!</div>';
+                        } else {
+                            watchlistContainer.innerHTML = data.low_stock_list.map(item => {
+                                const stock = parseInt(item.stock);
+                                const isCritical = stock === 0;
+                                return `
+                                    <div class="watchlist-item ${isCritical ? 'critical' : ''}">
+                                        <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                                            <strong style="font-size: 0.85rem; color: var(--text-main);">${item.brand_name} ${item.strength}</strong>
+                                            <span style="font-size: 0.72rem; color: var(--text-muted);">${item.generic_name}</span>
+                                            <span style="font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: ${isCritical ? 'var(--danger)' : (item.popularity === 'fast' ? '#3B82F6' : (item.popularity === 'normal' ? 'var(--text-muted)' : '#D97706'))}; margin-top: 0.15rem;">
+                                                ${isCritical ? 'Out of Stock' : (item.popularity === 'fast' ? '⚡ Fast-Moving (Threshold: 30)' : (item.popularity === 'normal' ? '📦 Normal (Threshold: 10)' : '🐌 Slow-Moving (Threshold: 3)'))}
+                                            </span>
+                                        </div>
+                                        <span class="badge ${isCritical ? 'badge-danger' : 'badge-warning'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">
+                                            ${stock} left
+                                        </span>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Dashboard metrics failed to load:", err);
                 });
         }
 
         function toggleStoreStatus() {
-            fetch(`api/inventory.php?action=toggle_status&pharma=${pharmaCode}`)
-                .then(res => res.json())
-                .then(() => loadData());
+            const statusText = storeIsOpen ? 'CLOSE' : 'OPEN';
+            if (confirm(`Are you sure you want to change the store status to ${statusText}?`)) {
+                fetch(`api/inventory.php?action=toggle_status&pharma=${pharmaCode}`)
+                    .then(res => res.json())
+                    .then(() => loadData());
+            }
         }
 
         // --- PRODUCT ACTIONS ---
