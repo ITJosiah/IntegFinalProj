@@ -147,7 +147,11 @@ $activePage = 'home';
                         <div class="local-card" data-name="${safePharmaName}" data-address="${safeAddress}" data-contact="${safeContact}" data-open="${med.is_open}" onclick="showPharmaDetails(this)">
                             <div class="local-card-top">
                                 <div class="local-card-info">
-                                    <p class="local-drug-name">${med.brand_name} <span class="local-generic">(${med.generic_name})</span></p>
+                                    <p class="local-drug-name">
+                                        ${med.brand_name} 
+                                        <span class="local-generic">(${med.generic_name})</span>
+                                        <span class="drug-badge ${parseInt(med.prescription_required) === 1 ? 'rx' : 'otc'}">${parseInt(med.prescription_required) === 1 ? 'Rx' : 'OTC'}</span>
+                                    </p>
                                     <span class="local-pharmacy-link">${med.pharmacy_name}</span>
                                 </div>
                                 <div class="local-price-wrap">

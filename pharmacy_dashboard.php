@@ -804,14 +804,14 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             <!-- Two-Column Layout for lists -->
             <div class="dashboard-details-row">
                 <!-- Left Column: Recent Sales Activity -->
-                <div class="dashboard-detail-box">
+                <div class="dashboard-detail-box" style="display: flex; flex-direction: column;">
                     <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                         </svg>
                         Recent POS Transactions
                     </h3>
-                    <div class="table-container" style="border: 1px solid var(--border-color); max-height: 400px; overflow-y: auto;">
+                    <div class="table-container" style="border: 1px solid var(--border-color); flex: 1; min-height: 350px; overflow-y: auto;">
                         <table>
                             <thead>
                                 <tr>
@@ -1076,9 +1076,18 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                     <label class="form-label">Assign Category</label>
                     <select id="medCatSelect" class="form-input" style="background: white;" required></select>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Manufacturer</label>
-                    <input type="text" id="medMan" class="form-input" placeholder="e.g. Unilab" required>
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Manufacturer</label>
+                        <input type="text" id="medMan" class="form-input" placeholder="e.g. Unilab" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Classification / Type</label>
+                        <select id="medRxOtc" class="form-input" style="background: white;" required>
+                            <option value="0" selected>Over-the-Counter (OTC)</option>
+                            <option value="1">Prescription Required (Rx)</option>
+                        </select>
+                    </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -1257,7 +1266,13 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                                 </td>
                                 <td>
                                     <div style="display:flex; flex-direction:column; gap:0.4rem;">
-                                        <input type="text" value="${med.manufacturer || ''}" id="manufacturer_${med.id}" style="width:100%;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;" placeholder="Manufacturer">
+                                        <div style="display:flex; gap:0.4rem;">
+                                            <input type="text" value="${med.manufacturer || ''}" id="manufacturer_${med.id}" style="flex:2;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;" placeholder="Manufacturer">
+                                            <select id="prescription_required_${med.id}" style="flex:1;padding:0.35rem;border:1px solid var(--border-color);border-radius:0.25rem;font-weight:700;color:var(--text-main);background:white;cursor:pointer;">
+                                                <option value="0" ${parseInt(med.prescription_required) === 0 ? 'selected' : ''}>OTC</option>
+                                                <option value="1" ${parseInt(med.prescription_required) === 1 ? 'selected' : ''}>Rx</option>
+                                            </select>
+                                        </div>
                                         <div style="display:flex; gap:0.4rem;">
                                             <div style="position:relative; flex:1; display:flex; align-items:center;">
                                                 <span style="position:absolute; left:8px; color:var(--text-muted); font-size:0.9rem; font-weight:600;">₱</span>
@@ -1463,6 +1478,7 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             const manufacturer = document.getElementById(`manufacturer_${id}`).value.trim();
             const price = document.getElementById(`price_${id}`).value;
             const stock = document.getElementById(`stock_${id}`).value;
+            const prescription_required = parseInt(document.getElementById(`prescription_required_${id}`).value);
 
             // 1. Client-side Input Validations
             if (!brand_name) {
@@ -1500,7 +1516,8 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                     original.category_id == category_id &&
                     original.manufacturer === manufacturer &&
                     parseFloat(original.price) === parseFloat(price) &&
-                    parseInt(original.stock) === parseInt(stock);
+                    parseInt(original.stock) === parseInt(stock) &&
+                    parseInt(original.prescription_required) === prescription_required;
                 
                 if (isUnchanged) {
                     alert("No changes detected. The product details are already up-to-date.");
@@ -1512,7 +1529,7 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             fetch(`api/inventory.php?action=update&pharma=${pharmaCode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, brand_name, strength, medicine_id, category_id, price, stock, manufacturer })
+                body: JSON.stringify({ id, brand_name, strength, medicine_id, category_id, price, stock, manufacturer, prescription_required })
             })
                 .then(res => res.json())
                 .then(data => {
@@ -1588,6 +1605,7 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             const manufacturer = document.getElementById('medMan').value.trim();
             const price = document.getElementById('medPrice').value;
             const stock = document.getElementById('medStock').value;
+            const prescription_required = parseInt(document.getElementById('medRxOtc').value);
 
             if (!brand_name) {
                 alert("Error: Brand Name is required.");
@@ -1617,7 +1635,7 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
             fetch(`api/inventory.php?action=add&pharma=${pharmaCode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ brand_name, strength, medicine_id, category_id, price, stock, manufacturer })
+                body: JSON.stringify({ brand_name, strength, medicine_id, category_id, price, stock, manufacturer, prescription_required })
             })
                 .then(res => res.json())
                 .then(data => {

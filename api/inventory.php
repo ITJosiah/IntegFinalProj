@@ -39,7 +39,7 @@ if ($action === 'get') {
     $prefix = $pharma . '_';
     
     // Fetch Products (stocked items)
-    $stmt = $db->query("SELECT p.id, m.generic_name, p.medicine_id, p.brand_name, p.strength, p.category_id, c.name as category, p.price, p.stock, p.manufacturer 
+    $stmt = $db->query("SELECT p.id, m.generic_name, p.medicine_id, p.brand_name, p.strength, p.category_id, c.name as category, p.price, p.stock, p.manufacturer, p.prescription_required 
                         FROM {$prefix}products p 
                         JOIN {$prefix}medicines m ON p.medicine_id = m.id 
                         JOIN {$prefix}categories c ON p.category_id = c.id 
@@ -193,8 +193,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $stmt = $db->prepare("INSERT INTO {$prefix}products (brand_name, strength, medicine_id, category_id, price, stock, manufacturer) 
-                              VALUES (:brand_name, :strength, :medicine_id, :category_id, :price, :stock, :manufacturer)");
+        $stmt = $db->prepare("INSERT INTO {$prefix}products (brand_name, strength, medicine_id, category_id, price, stock, manufacturer, prescription_required) 
+                              VALUES (:brand_name, :strength, :medicine_id, :category_id, :price, :stock, :manufacturer, :prescription_required)");
         $stmt->execute([
             'brand_name' => trim($input['brand_name']),
             'strength' => trim($input['strength']),
@@ -202,7 +202,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'category_id' => $input['category_id'],
             'price' => floatval($input['price']),
             'stock' => intval($input['stock']),
-            'manufacturer' => trim($input['manufacturer'] ?? '')
+            'manufacturer' => trim($input['manufacturer'] ?? ''),
+            'prescription_required' => intval($input['prescription_required'] ?? 0)
         ]);
         
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
@@ -225,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $stmt = $db->prepare("UPDATE {$prefix}products SET brand_name = :brand_name, strength = :strength, medicine_id = :medicine_id, category_id = :category_id, price = :price, stock = :stock, manufacturer = :manufacturer WHERE id = :id");
+        $stmt = $db->prepare("UPDATE {$prefix}products SET brand_name = :brand_name, strength = :strength, medicine_id = :medicine_id, category_id = :category_id, price = :price, stock = :stock, manufacturer = :manufacturer, prescription_required = :prescription_required WHERE id = :id");
         $stmt->execute([
             'brand_name' => trim($input['brand_name']),
             'strength' => trim($input['strength']),
@@ -234,6 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'price' => floatval($input['price']),
             'stock' => intval($input['stock']),
             'manufacturer' => trim($input['manufacturer']),
+            'prescription_required' => intval($input['prescription_required'] ?? 0),
             'id' => $input['id']
         ]);
         

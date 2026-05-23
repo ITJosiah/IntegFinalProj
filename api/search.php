@@ -26,14 +26,14 @@ foreach ($dbs as $code => $dbName) {
     $db = getDBConnection($dbName);
     $prefix = $code . '_';
     if ($query === '') {
-        $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock 
+        $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock, p.prescription_required 
                 FROM {$prefix}products p 
                 JOIN {$prefix}medicines m ON p.medicine_id = m.id 
                 JOIN {$prefix}categories c ON p.category_id = c.id 
                 ORDER BY m.generic_name ASC";
         $stmt = $db->query($sql);
     } else {
-        $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock 
+        $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock, p.prescription_required 
                 FROM {$prefix}products p 
                 JOIN {$prefix}medicines m ON p.medicine_id = m.id 
                 JOIN {$prefix}categories c ON p.category_id = c.id 

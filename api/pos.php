@@ -36,7 +36,7 @@ $dbName = $dbs[$pharma];
 if ($action === 'get_products') {
     $db = getDBConnection($dbName);
     $prefix = $pharma . '_';
-    $stmt = $db->query("SELECT p.id, CONCAT(p.brand_name, ' ', p.strength) as name, m.generic_name, p.price, p.stock, c.name as category
+    $stmt = $db->query("SELECT p.id, CONCAT(p.brand_name, ' ', p.strength) as name, m.generic_name, p.price, p.stock, c.name as category, p.prescription_required
                         FROM {$prefix}products p 
                         JOIN {$prefix}medicines m ON p.medicine_id = m.id 
                         JOIN {$prefix}categories c ON p.category_id = c.id 

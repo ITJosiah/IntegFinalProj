@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS laurents_products (
     manufacturer VARCHAR(100),
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
+    prescription_required BOOLEAN DEFAULT FALSE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (medicine_id) REFERENCES laurents_medicines(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES laurents_categories(id) ON DELETE CASCADE
@@ -114,6 +115,7 @@ CREATE TABLE IF NOT EXISTS jrm_products (
     manufacturer VARCHAR(100),
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
+    prescription_required BOOLEAN DEFAULT FALSE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (medicine_id) REFERENCES jrm_medicines(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES jrm_categories(id) ON DELETE CASCADE
@@ -160,6 +162,7 @@ CREATE TABLE IF NOT EXISTS riteaid_products (
     manufacturer VARCHAR(100),
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
+    prescription_required BOOLEAN DEFAULT FALSE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (medicine_id) REFERENCES riteaid_medicines(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES riteaid_categories(id) ON DELETE CASCADE
