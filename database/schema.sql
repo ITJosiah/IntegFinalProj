@@ -1,11 +1,12 @@
--- PharmaSync Fully Normalized Pure DDL Schema (Healthcare Standard Option B)
+-- PharmaSync Unified DDL Schema (Single Database for Free Hosting)
 -- Hierarchical entities: categories & medicines (generics) -> products (commercial branded strength SKUs)
 
--- 1. CORE DATABASE (Middleware & Logs)
-DROP DATABASE IF EXISTS pharmasync_core;
-CREATE DATABASE pharmasync_core;
-USE pharmasync_core;
+-- LOCALHOST SETUP: Automatically drop and recreate the database
+DROP DATABASE IF EXISTS pharmasync_db;
+CREATE DATABASE pharmasync_db;
+USE pharmasync_db;
 
+-- 1. CORE TABLES (Middleware & Logs)
 CREATE TABLE IF NOT EXISTS pharmacies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -47,23 +48,18 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- 2. LAURENTS PHARMACY DATABASE
-DROP DATABASE IF EXISTS pharmacy_laurents;
-CREATE DATABASE pharmacy_laurents;
-USE pharmacy_laurents;
-
-CREATE TABLE IF NOT EXISTS categories (
+-- 2. LAURENTS PHARMACY TABLES
+CREATE TABLE IF NOT EXISTS laurents_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS medicines (
+CREATE TABLE IF NOT EXISTS laurents_medicines (
     id INT AUTO_INCREMENT PRIMARY KEY,
     generic_name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS laurents_products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     brand_name VARCHAR(100) NOT NULL,
     strength VARCHAR(50) NOT NULL,
@@ -73,11 +69,11 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES laurents_medicines(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES laurents_categories(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS sales (
+CREATE TABLE IF NOT EXISTS laurents_sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
     receipt_no VARCHAR(30) NOT NULL UNIQUE,
     total_amount DECIMAL(10, 2) NOT NULL,
@@ -86,7 +82,7 @@ CREATE TABLE IF NOT EXISTS sales (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS sale_items (
+CREATE TABLE IF NOT EXISTS laurents_sale_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sale_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -94,27 +90,22 @@ CREATE TABLE IF NOT EXISTS sale_items (
     quantity INT NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY (sale_id) REFERENCES laurents_sales(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES laurents_products(id) ON DELETE CASCADE
 );
 
-
--- 3. JRM DOCTORS PHARMACY DATABASE
-DROP DATABASE IF EXISTS pharmacy_jrm;
-CREATE DATABASE pharmacy_jrm;
-USE pharmacy_jrm;
-
-CREATE TABLE IF NOT EXISTS categories (
+-- 3. JRM DOCTORS PHARMACY TABLES
+CREATE TABLE IF NOT EXISTS jrm_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS medicines (
+CREATE TABLE IF NOT EXISTS jrm_medicines (
     id INT AUTO_INCREMENT PRIMARY KEY,
     generic_name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS jrm_products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     brand_name VARCHAR(100) NOT NULL,
     strength VARCHAR(50) NOT NULL,
@@ -124,11 +115,11 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES jrm_medicines(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES jrm_categories(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS sales (
+CREATE TABLE IF NOT EXISTS jrm_sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
     receipt_no VARCHAR(30) NOT NULL UNIQUE,
     total_amount DECIMAL(10, 2) NOT NULL,
@@ -137,7 +128,7 @@ CREATE TABLE IF NOT EXISTS sales (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS sale_items (
+CREATE TABLE IF NOT EXISTS jrm_sale_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sale_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -145,27 +136,22 @@ CREATE TABLE IF NOT EXISTS sale_items (
     quantity INT NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY (sale_id) REFERENCES jrm_sales(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES jrm_products(id) ON DELETE CASCADE
 );
 
-
--- 4. D' RITE AID GENERICS PHARMACY DATABASE
-DROP DATABASE IF EXISTS pharmacy_riteaid;
-CREATE DATABASE pharmacy_riteaid;
-USE pharmacy_riteaid;
-
-CREATE TABLE IF NOT EXISTS categories (
+-- 4. D' RITE AID GENERICS PHARMACY TABLES
+CREATE TABLE IF NOT EXISTS riteaid_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS medicines (
+CREATE TABLE IF NOT EXISTS riteaid_medicines (
     id INT AUTO_INCREMENT PRIMARY KEY,
     generic_name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS riteaid_products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     brand_name VARCHAR(100) NOT NULL,
     strength VARCHAR(50) NOT NULL,
@@ -175,11 +161,11 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(10, 2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES riteaid_medicines(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES riteaid_categories(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS sales (
+CREATE TABLE IF NOT EXISTS riteaid_sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
     receipt_no VARCHAR(30) NOT NULL UNIQUE,
     total_amount DECIMAL(10, 2) NOT NULL,
@@ -188,7 +174,7 @@ CREATE TABLE IF NOT EXISTS sales (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS sale_items (
+CREATE TABLE IF NOT EXISTS riteaid_sale_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sale_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -196,6 +182,6 @@ CREATE TABLE IF NOT EXISTS sale_items (
     quantity INT NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY (sale_id) REFERENCES riteaid_sales(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES riteaid_products(id) ON DELETE CASCADE
 );

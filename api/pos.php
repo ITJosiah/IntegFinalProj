@@ -35,10 +35,11 @@ $dbName = $dbs[$pharma];
 // ── GET PRODUCTS (with stock info for POS grid) ──
 if ($action === 'get_products') {
     $db = getDBConnection($dbName);
+    $prefix = $pharma . '_';
     $stmt = $db->query("SELECT p.id, CONCAT(p.brand_name, ' ', p.strength) as name, m.generic_name, p.price, p.stock, c.name as category
-                        FROM products p 
-                        JOIN medicines m ON p.medicine_id = m.id 
-                        JOIN categories c ON p.category_id = c.id 
+                        FROM {$prefix}products p 
+                        JOIN {$prefix}medicines m ON p.medicine_id = m.id 
+                        JOIN {$prefix}categories c ON p.category_id = c.id 
                         ORDER BY p.brand_name ASC");
     $products = $stmt->fetchAll();
     
@@ -49,12 +50,13 @@ if ($action === 'get_products') {
 // ── GET SALES HISTORY ──
 if ($action === 'get_history') {
     $db = getDBConnection($dbName);
+    $prefix = $pharma . '_';
     
     // Check if sales table exists
     try {
         $stmt = $db->query("SELECT s.*, GROUP_CONCAT(CONCAT(si.product_name, ' x', si.quantity) SEPARATOR ', ') as items_summary
-                           FROM sales s 
-                           LEFT JOIN sale_items si ON s.id = si.sale_id 
+                           FROM {$prefix}sales s 
+                           LEFT JOIN {$prefix}sale_items si ON s.id = si.sale_id 
                            GROUP BY s.id 
                            ORDER BY s.created_at DESC 
                            LIMIT 50");
@@ -83,6 +85,7 @@ if ($action === 'process_sale' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $amountPaid = floatval($input['amount_paid']);
     
     $db = getDBConnection($dbName);
+    $prefix = $pharma . '_';
     
     // 1. Validate all items have sufficient stock
     $totalAmount = 0;
@@ -97,7 +100,7 @@ if ($action === 'process_sale' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         
-        $stmt = $db->prepare("SELECT id, CONCAT(brand_name, ' ', strength) as name, price, stock FROM products WHERE id = :id");
+        $stmt = $db->prepare("SELECT id, CONCAT(brand_name, ' ', strength) as name, price, stock FROM {$prefix}products WHERE id = :id");
         $stmt->execute(['id' => $productId]);
         $product = $stmt->fetch();
         
@@ -140,7 +143,7 @@ if ($action === 'process_sale' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $db->beginTransaction();
         
         // Insert sale record
-        $stmt = $db->prepare("INSERT INTO sales (receipt_no, total_amount, amount_paid, change_amount) VALUES (:receipt_no, :total, :paid, :change_amt)");
+        $stmt = $db->prepare("INSERT INTO {$prefix}sales (receipt_no, total_amount, amount_paid, change_amount) VALUES (:receipt_no, :total, :paid, :change_amt)");
         $stmt->execute([
             'receipt_no' => $receiptNo,
             'total' => $totalAmount,
@@ -150,8 +153,8 @@ if ($action === 'process_sale' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $saleId = $db->lastInsertId();
         
         // Insert sale items and deduct stock
-        $stmtItem = $db->prepare("INSERT INTO sale_items (sale_id, product_id, product_name, quantity, unit_price, subtotal) VALUES (:sale_id, :product_id, :product_name, :quantity, :unit_price, :subtotal)");
-        $stmtStock = $db->prepare("UPDATE products SET stock = stock - :qty WHERE id = :id");
+        $stmtItem = $db->prepare("INSERT INTO {$prefix}sale_items (sale_id, product_id, product_name, quantity, unit_price, subtotal) VALUES (:sale_id, :product_id, :product_name, :quantity, :unit_price, :subtotal)");
+        $stmtStock = $db->prepare("UPDATE {$prefix}products SET stock = stock - :qty WHERE id = :id");
         
         foreach ($validatedItems as $vi) {
             $stmtItem->execute([

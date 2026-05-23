@@ -1,8 +1,8 @@
 -- PharmaSync Master Seed Script (Healthcare Standard Option B)
 -- Populates core pharmacy nodes and expanded rural Philippine medicine catalogs
 
+USE pharmasync_db;
 -- 1. CORE PHARMACY NODES
-USE pharmasync_core;
 
 INSERT IGNORE INTO pharmacies (id, name, username, password_hash, code, address, contact_number, email, latitude, longitude, is_open) VALUES
 (1, 'Laurent\'s Pharmacy', 'laurents', '$2y$10$BPb1YJOCljVGvy9mJzaWS.KsS1M9aLn7ihKeCKisLauVDjPviz7z6', 'laurents', 'Maharlika Highway, Poblacion, Basud, Camarines Norte, 4608', '0917-111-2222', 'laurents.pharmacy@gmail.com', 14.0700, 122.9645, 1),
@@ -14,9 +14,8 @@ INSERT IGNORE INTO admins (id, username, password_hash, name) VALUES
 
 
 -- 2. LAURENTS PHARMACY DATA
-USE pharmacy_laurents;
 
-INSERT IGNORE INTO categories (id, name) VALUES
+INSERT IGNORE INTO laurents_categories (id, name) VALUES
 (1, 'Fever & Pain Relief'),
 (2, 'Antibiotics'),
 (3, 'Allergy & Antihistamine'),
@@ -24,7 +23,7 @@ INSERT IGNORE INTO categories (id, name) VALUES
 (5, 'Antacids & Gastro'),
 (6, 'Vitamins & Supplements');
 
-INSERT IGNORE INTO medicines (id, generic_name) VALUES
+INSERT IGNORE INTO laurents_medicines (id, generic_name) VALUES
 (1, 'Paracetamol'),
 (2, 'Amoxicillin'),
 (3, 'Cetirizine'),
@@ -37,7 +36,7 @@ INSERT IGNORE INTO medicines (id, generic_name) VALUES
 (10, 'Metoclopramide'),
 (11, 'Diphenhydramine');
 
-INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id, manufacturer, price, stock) VALUES
+INSERT IGNORE INTO laurents_products (id, brand_name, strength, medicine_id, category_id, manufacturer, price, stock) VALUES
 (1, 'Biogesic', '500mg', 1, 1, 'Unilab', 5.00, 150),
 (2, 'Amoxil', '500mg', 2, 2, 'GSK', 12.50, 85),
 (3, 'Virlix', '10mg', 3, 3, 'Sanofi', 22.00, 40),
@@ -52,9 +51,8 @@ INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id,
 
 
 -- 3. JRM DOCTORS PHARMACY DATA
-USE pharmacy_jrm;
 
-INSERT IGNORE INTO categories (id, name) VALUES
+INSERT IGNORE INTO jrm_categories (id, name) VALUES
 (1, 'Fever & Pain Relief'),
 (2, 'Antibiotics'),
 (3, 'Allergy & Antihistamine'),
@@ -63,7 +61,7 @@ INSERT IGNORE INTO categories (id, name) VALUES
 (6, 'Vitamins & Supplements'),
 (7, 'Hypertension & Heart');
 
-INSERT IGNORE INTO medicines (id, generic_name) VALUES
+INSERT IGNORE INTO jrm_medicines (id, generic_name) VALUES
 (1, 'Paracetamol'),
 (2, 'Ibuprofen'),
 (3, 'Loperamide'),
@@ -75,7 +73,7 @@ INSERT IGNORE INTO medicines (id, generic_name) VALUES
 (9, 'Aspirin'),
 (10, 'Dextromethorphan');
 
-INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id, manufacturer, price, stock) VALUES
+INSERT IGNORE INTO jrm_products (id, brand_name, strength, medicine_id, category_id, manufacturer, price, stock) VALUES
 (1, 'Tempra', '500mg', 1, 1, 'Taisho', 4.50, 200),
 (2, 'Medicol', 'Advance 400mg', 2, 1, 'Unilab', 9.00, 120),
 (3, 'Diatabs', '2mg', 3, 5, 'Unilab', 6.75, 95),
@@ -90,9 +88,8 @@ INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id,
 
 
 -- 4. D' RITE AID GENERICS PHARMACY DATA
-USE pharmacy_riteaid;
 
-INSERT IGNORE INTO categories (id, name) VALUES
+INSERT IGNORE INTO riteaid_categories (id, name) VALUES
 (1, 'Fever & Pain Relief'),
 (2, 'Antibiotics'),
 (3, 'Allergy & Antihistamine'),
@@ -100,7 +97,7 @@ INSERT IGNORE INTO categories (id, name) VALUES
 (5, 'Antacids & Gastro'),
 (6, 'Vitamins & Supplements');
 
-INSERT IGNORE INTO medicines (id, generic_name) VALUES
+INSERT IGNORE INTO riteaid_medicines (id, generic_name) VALUES
 (1, 'Cetirizine'),
 (2, 'Mefenamic Acid'),
 (3, 'Carbocisteine'),
@@ -110,7 +107,7 @@ INSERT IGNORE INTO medicines (id, generic_name) VALUES
 (7, 'Naproxen Sodium'),
 (8, 'Co-trimoxazole');
 
-INSERT IGNORE INTO products (id, brand_name, strength, medicine_id, category_id, manufacturer, price, stock) VALUES
+INSERT IGNORE INTO riteaid_products (id, brand_name, strength, medicine_id, category_id, manufacturer, price, stock) VALUES
 (1, 'Alnix', '10mg', 1, 3, 'Unilab', 20.00, 110),
 (2, 'Dolfenal', '500mg', 2, 1, 'Unilab', 25.00, 60),
 (3, 'Solmux', '500mg', 3, 4, 'Unilab', 11.25, 180),

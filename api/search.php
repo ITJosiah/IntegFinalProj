@@ -24,18 +24,19 @@ foreach ($dbs as $code => $dbName) {
     $pharmaInfo = $pharmacies[$code];
 
     $db = getDBConnection($dbName);
+    $prefix = $code . '_';
     if ($query === '') {
         $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock 
-                FROM products p 
-                JOIN medicines m ON p.medicine_id = m.id 
-                JOIN categories c ON p.category_id = c.id 
+                FROM {$prefix}products p 
+                JOIN {$prefix}medicines m ON p.medicine_id = m.id 
+                JOIN {$prefix}categories c ON p.category_id = c.id 
                 ORDER BY m.generic_name ASC";
         $stmt = $db->query($sql);
     } else {
         $sql = "SELECT p.id, m.generic_name, CONCAT(p.brand_name, ' ', p.strength) as brand_name, c.name as category, p.price, p.stock 
-                FROM products p 
-                JOIN medicines m ON p.medicine_id = m.id 
-                JOIN categories c ON p.category_id = c.id 
+                FROM {$prefix}products p 
+                JOIN {$prefix}medicines m ON p.medicine_id = m.id 
+                JOIN {$prefix}categories c ON p.category_id = c.id 
                 WHERE m.generic_name LIKE :q1 OR p.brand_name LIKE :q2 OR c.name LIKE :q3 
                 ORDER BY m.generic_name ASC";
         $stmt = $db->prepare($sql);

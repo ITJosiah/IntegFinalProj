@@ -60,7 +60,8 @@ $dbs = [
 ];
 if (isset($dbs[$pharmaCode])) {
     $db = getDBConnection($dbs[$pharmaCode]);
-    $stmtUpdate = $db->prepare("UPDATE products SET stock = :stock WHERE id = :id");
+    $prefix = $pharmaCode . '_';
+    $stmtUpdate = $db->prepare("UPDATE {$prefix}products SET stock = :stock WHERE id = :id");
     $stmtUpdate->execute([
         'stock' => $currentStock,
         'id' => $medicineId

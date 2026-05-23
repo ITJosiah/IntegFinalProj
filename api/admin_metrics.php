@@ -12,44 +12,19 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
     exit;
 }
 
-$host = 'localhost';
-$user = 'root';
-$pass = '';
+require_once 'config/db.php';
 
-function check_db_connectivity($host, $user, $pass, $db_name)
-{
-    try {
-        $link = new PDO("mysql:host=$host;dbname=$db_name", $user, $pass, [
-            PDO::ATTR_TIMEOUT => 1,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ]);
-        return "ONLINE";
-    } catch (\Exception $e) {
-        return "OFFLINE";
-    }
-}
+// Try to connect to the unified database
+// getDBConnection() will handle any fatal errors internally, but we can also check
+$core_pdo = getDBConnection();
 
+// Since all pharmacies now share the same database, they share the same status
+$status = $core_pdo ? "ONLINE" : "OFFLINE";
 $nodes = [
-    'laurents' => check_db_connectivity($host, $user, $pass, 'pharmacy_laurents'),
-    'jrm' => check_db_connectivity($host, $user, $pass, 'pharmacy_jrm'),
-    'riteaid' => check_db_connectivity($host, $user, $pass, 'pharmacy_riteaid')
+    'laurents' => $status,
+    'jrm' => $status,
+    'riteaid' => $status
 ];
-
-try {
-    $core_pdo = new PDO("mysql:host=$host;dbname=pharmasync_core", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-} catch (\Exception $e) {
-    echo json_encode([
-        "nodes" => $nodes,
-        "pharmacies" => [],
-        "webhook_logs" => [],
-        "audit_trails" => [],
-        "error" => "Master Core Offline: " . $e->getMessage()
-    ]);
-    exit;
-}
 
 // Fetch dynamic pharmacy directory and metadata from core database
 $pharmacies_data = [];

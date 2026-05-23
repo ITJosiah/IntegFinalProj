@@ -36,21 +36,22 @@ $dbName = $dbs[$pharma];
 
 if ($action === 'get') {
     $db = getDBConnection($dbName);
+    $prefix = $pharma . '_';
     
     // Fetch Products (stocked items)
     $stmt = $db->query("SELECT p.id, m.generic_name, p.medicine_id, p.brand_name, p.strength, p.category_id, c.name as category, p.price, p.stock, p.manufacturer 
-                        FROM products p 
-                        JOIN medicines m ON p.medicine_id = m.id 
-                        JOIN categories c ON p.category_id = c.id 
+                        FROM {$prefix}products p 
+                        JOIN {$prefix}medicines m ON p.medicine_id = m.id 
+                        JOIN {$prefix}categories c ON p.category_id = c.id 
                         ORDER BY m.generic_name ASC");
     $products = $stmt->fetchAll();
 
     // Fetch Generic Medicines (mapped to the frontend's legacy 'brands' dropdown/table)
-    $stmtBrands = $db->query("SELECT id, generic_name as name FROM medicines ORDER BY generic_name ASC");
+    $stmtBrands = $db->query("SELECT id, generic_name as name FROM {$prefix}medicines ORDER BY generic_name ASC");
     $brands = $stmtBrands->fetchAll();
 
     // Fetch Categories
-    $stmtCat = $db->query("SELECT * FROM categories ORDER BY name ASC");
+    $stmtCat = $db->query("SELECT * FROM {$prefix}categories ORDER BY name ASC");
     $categories = $stmtCat->fetchAll();
 
     $coreDB = getDBConnection('pharmasync_core');
@@ -89,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents("php://input"), true);
     $db = getDBConnection($dbName);
     $coreDB = getDBConnection('pharmasync_core');
+    $prefix = $pharma . '_';
 
     // --- CATEGORY CRUD ---
     if ($action === 'add_category') {
@@ -96,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Category name cannot be empty.']);
             exit;
         }
-        $stmt = $db->prepare("INSERT INTO categories (name) VALUES (:name)");
+        $stmt = $db->prepare("INSERT INTO {$prefix}categories (name) VALUES (:name)");
         $stmt->execute(['name' => trim($input['category_name'])]);
         
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
@@ -110,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Missing ID or Category name is empty.']);
             exit;
         }
-        $stmt = $db->prepare("UPDATE categories SET name = :name WHERE id = :id");
+        $stmt = $db->prepare("UPDATE {$prefix}categories SET name = :name WHERE id = :id");
         $stmt->execute(['name' => trim($input['category_name']), 'id' => $input['id']]);
         
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
@@ -127,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
         $stmtLog->execute(['code' => $pharma, 'msg' => "Deleted category ID {$input['id']}"]);
 
-        $stmt = $db->prepare("DELETE FROM categories WHERE id = :id");
+        $stmt = $db->prepare("DELETE FROM {$prefix}categories WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
@@ -139,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Generic Active Ingredient name cannot be empty.']);
             exit;
         }
-        $stmt = $db->prepare("INSERT INTO medicines (generic_name) VALUES (:name)");
+        $stmt = $db->prepare("INSERT INTO {$prefix}medicines (generic_name) VALUES (:name)");
         $stmt->execute(['name' => trim($input['brand_name'])]);
         
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
@@ -153,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Missing ID or Generic Active Ingredient name is empty.']);
             exit;
         }
-        $stmt = $db->prepare("UPDATE medicines SET generic_name = :name WHERE id = :id");
+        $stmt = $db->prepare("UPDATE {$prefix}medicines SET generic_name = :name WHERE id = :id");
         $stmt->execute(['name' => trim($input['brand_name']), 'id' => $input['id']]);
         
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
@@ -170,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
         $stmtLog->execute(['code' => $pharma, 'msg' => "Deleted generic medicine ID {$input['id']}"]);
 
-        $stmt = $db->prepare("DELETE FROM medicines WHERE id = :id");
+        $stmt = $db->prepare("DELETE FROM {$prefix}medicines WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
@@ -191,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $stmt = $db->prepare("INSERT INTO products (brand_name, strength, medicine_id, category_id, price, stock, manufacturer) 
+        $stmt = $db->prepare("INSERT INTO {$prefix}products (brand_name, strength, medicine_id, category_id, price, stock, manufacturer) 
                               VALUES (:brand_name, :strength, :medicine_id, :category_id, :price, :stock, :manufacturer)");
         $stmt->execute([
             'brand_name' => trim($input['brand_name']),
@@ -223,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $stmt = $db->prepare("UPDATE products SET brand_name = :brand_name, strength = :strength, medicine_id = :medicine_id, category_id = :category_id, price = :price, stock = :stock, manufacturer = :manufacturer WHERE id = :id");
+        $stmt = $db->prepare("UPDATE {$prefix}products SET brand_name = :brand_name, strength = :strength, medicine_id = :medicine_id, category_id = :category_id, price = :price, stock = :stock, manufacturer = :manufacturer WHERE id = :id");
         $stmt->execute([
             'brand_name' => trim($input['brand_name']),
             'strength' => trim($input['strength']),
@@ -249,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
         $stmtLog->execute(['code' => $pharma, 'msg' => "Deleted product ID {$input['id']}"]);
 
-        $stmt = $db->prepare("DELETE FROM products WHERE id = :id");
+        $stmt = $db->prepare("DELETE FROM {$prefix}products WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
         exit;
