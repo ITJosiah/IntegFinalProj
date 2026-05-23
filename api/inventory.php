@@ -73,6 +73,14 @@ if ($action === 'toggle_status') {
     $stmt = $coreDB->prepare("UPDATE pharmacies SET is_open = NOT is_open, last_sync = CURRENT_TIMESTAMP WHERE code = :code");
     $stmt->execute(['code' => $pharma]);
 
+    $stmt2 = $coreDB->prepare("SELECT is_open FROM pharmacies WHERE code = :code");
+    $stmt2->execute(['code' => $pharma]);
+    $isOpen = $stmt2->fetchColumn();
+    $statusText = $isOpen ? 'Opened' : 'Closed';
+    
+    $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'STORE_STATUS', :msg)");
+    $stmtLog->execute(['code' => $pharma, 'msg' => "Store status set to $statusText"]);
+
     echo json_encode(['status' => 'success', 'message' => 'Store status updated']);
     exit;
 }
@@ -80,6 +88,7 @@ if ($action === 'toggle_status') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents("php://input"), true);
     $db = getDBConnection($dbName);
+    $coreDB = getDBConnection('pharmasync_core');
 
     // --- CATEGORY CRUD ---
     if ($action === 'add_category') {
@@ -89,6 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt = $db->prepare("INSERT INTO categories (name) VALUES (:name)");
         $stmt->execute(['name' => trim($input['category_name'])]);
+        
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Added new category: " . trim($input['category_name'])]);
+
         echo json_encode(['status' => 'success', 'category_id' => $db->lastInsertId()]);
         exit;
     }
@@ -99,6 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt = $db->prepare("UPDATE categories SET name = :name WHERE id = :id");
         $stmt->execute(['name' => trim($input['category_name']), 'id' => $input['id']]);
+        
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Updated category ID {$input['id']} to " . trim($input['category_name'])]);
+
         echo json_encode(['status' => 'success']);
         exit;
     }
@@ -107,6 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Category ID is required.']);
             exit;
         }
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Deleted category ID {$input['id']}"]);
+
         $stmt = $db->prepare("DELETE FROM categories WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
@@ -121,6 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt = $db->prepare("INSERT INTO medicines (generic_name) VALUES (:name)");
         $stmt->execute(['name' => trim($input['brand_name'])]);
+        
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Added new generic medicine: " . trim($input['brand_name'])]);
+
         echo json_encode(['status' => 'success', 'brand_id' => $db->lastInsertId()]);
         exit;
     }
@@ -131,6 +155,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt = $db->prepare("UPDATE medicines SET generic_name = :name WHERE id = :id");
         $stmt->execute(['name' => trim($input['brand_name']), 'id' => $input['id']]);
+        
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Updated generic medicine ID {$input['id']} to " . trim($input['brand_name'])]);
+
         echo json_encode(['status' => 'success']);
         exit;
     }
@@ -139,6 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Medicine ID is required.']);
             exit;
         }
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Deleted generic medicine ID {$input['id']}"]);
+
         $stmt = $db->prepare("DELETE FROM medicines WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);
@@ -171,6 +202,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'stock' => intval($input['stock']),
             'manufacturer' => trim($input['manufacturer'] ?? '')
         ]);
+        
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Added new product: " . trim($input['brand_name']) . " " . trim($input['strength']) . " (Stock: " . intval($input['stock']) . ")"]);
+
         echo json_encode(['status' => 'success']);
         exit;
     }
@@ -199,6 +234,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'manufacturer' => trim($input['manufacturer']),
             'id' => $input['id']
         ]);
+        
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Updated product ID {$input['id']}: " . trim($input['brand_name']) . " " . trim($input['strength']) . " (Stock: " . intval($input['stock']) . ", Price: ₱" . number_format(floatval($input['price']), 2) . ")"]);
+
         echo json_encode(['status' => 'success']);
         exit;
     }
@@ -207,6 +246,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Product ID is required for deletion.']);
             exit;
         }
+        $stmtLog = $coreDB->prepare("INSERT INTO logs (pharmacy_code, action, message) VALUES (:code, 'INVENTORY_UPDATE', :msg)");
+        $stmtLog->execute(['code' => $pharma, 'msg' => "Deleted product ID {$input['id']}"]);
+
         $stmt = $db->prepare("DELETE FROM products WHERE id = :id");
         $stmt->execute(['id' => $input['id']]);
         echo json_encode(['status' => 'success']);

@@ -82,6 +82,474 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
         .tab-content.active {
             display: block;
         }
+
+        /* ── POS SYSTEM STYLES ── */
+        .pos-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .pos-search-box {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .pos-search-box input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            background: white;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .pos-search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .pos-search-box svg {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .pos-product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 0.75rem;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .pos-product-grid::-webkit-scrollbar { width: 6px; }
+        .pos-product-grid::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 3px; }
+        .pos-product-grid::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+        .pos-product-card {
+            background: white;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .pos-product-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .pos-product-card.out-of-stock {
+            opacity: 0.45;
+            pointer-events: none;
+            background: #F8FAFC;
+        }
+
+        .pos-prod-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .pos-prod-generic {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .pos-prod-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.35rem;
+        }
+
+        .pos-prod-price {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .pos-prod-stock {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .pos-prod-stock.in { background: #D1FAE5; color: #065F46; }
+        .pos-prod-stock.low { background: #FEF3C7; color: #92400E; }
+        .pos-prod-stock.out { background: #FEE2E2; color: #991B1B; }
+
+        /* Cart Panel */
+        .pos-cart-panel {
+            background: white;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            max-height: 620px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .pos-cart-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pos-cart-header h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pos-cart-count {
+            background: var(--primary);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+        }
+
+        .pos-cart-clear {
+            background: none;
+            border: none;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--danger);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pos-cart-clear:hover { opacity: 0.7; }
+
+        .pos-cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .pos-cart-items::-webkit-scrollbar { width: 4px; }
+        .pos-cart-items::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 2px; }
+
+        .pos-cart-empty {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .pos-cart-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 1.25rem;
+            border-bottom: 1px solid #F1F5F9;
+            transition: background 0.15s;
+        }
+
+        .pos-cart-item:hover { background: #F8FAFC; }
+
+        .pos-cart-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pos-cart-item-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pos-cart-item-price {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .pos-cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .pos-cart-qty-btn {
+            width: 26px;
+            height: 26px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .pos-cart-qty-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .pos-cart-qty-input {
+            width: 38px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.2rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            outline: none;
+            -moz-appearance: textfield; /* Firefox */
+        }
+
+        /* Chrome, Safari, Edge, Opera */
+        .pos-cart-qty-input::-webkit-outer-spin-button,
+        .pos-cart-qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .pos-cart-qty-input:focus {
+            border-color: var(--primary);
+        }
+
+        .pos-cart-item-subtotal {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            min-width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .pos-cart-item-remove {
+            background: none;
+            border: none;
+            color: #CBD5E1;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .pos-cart-item-remove:hover { color: var(--danger); }
+
+        /* Checkout Footer */
+        .pos-checkout {
+            border-top: 2px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            background: #FAFBFD;
+            border-radius: 0 0 0.75rem 0.75rem;
+        }
+
+        .pos-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .pos-total-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .pos-total-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .pos-change-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .pos-pay-input {
+            width: 100%;
+            padding: 0.7rem 0.85rem 0.7rem 1.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            outline: none;
+            transition: var(--transition);
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        .pos-pay-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .pos-pay-group {
+            position: relative;
+            margin: 0.75rem 0;
+        }
+
+        .pos-pay-group .peso-sign {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .pos-complete-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .pos-complete-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .pos-complete-btn:disabled {
+            background: #CBD5E1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Sales History */
+        .pos-history-section {
+            margin-top: 1.5rem;
+        }
+
+        .pos-history-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .pos-history-toggle:hover { color: var(--primary); }
+
+        .pos-history-list {
+            display: none;
+            margin-top: 0.75rem;
+        }
+
+        .pos-history-list.open { display: block; }
+
+        .pos-sale-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .pos-sale-row:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
+        }
+
+        .pos-sale-receipt {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: monospace;
+            min-width: 160px;
+        }
+
+        .pos-sale-items {
+            flex: 1;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pos-sale-total {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-main);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .pos-sale-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            min-width: 110px;
+            text-align: right;
+        }
+
+        @media (max-width: 900px) {
+            .pos-layout {
+                grid-template-columns: 1fr;
+            }
+            .pos-cart-panel {
+                position: static;
+            }
+        }
     </style>
 </head>
 
@@ -135,16 +603,23 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
 
         <!-- ERP Tabs Navigation -->
         <div class="erp-tabs">
-            <button class="erp-tab-btn active" onclick="switchTab('medicines', event)">Branded Products</button>
+            <button class="erp-tab-btn active" onclick="switchTab('pos', event)">Point of Sale</button>
+            <button class="erp-tab-btn" onclick="switchTab('medicines', event)">Branded Products</button>
             <button class="erp-tab-btn" onclick="switchTab('brands', event)">Generics Dictionary</button>
             <button class="erp-tab-btn" onclick="switchTab('categories', event)">Categories</button>
+            <button class="erp-tab-btn" onclick="switchTab('logs', event)">History / Logs</button>
 
             <!-- Dynamic Search & Action Controls on the Right -->
             <div class="erp-tab-controls-container"
                 style="margin-left: auto; display: flex; align-items: center; margin-bottom: 8px;">
+                <!-- Controls for POS -->
+                <div id="controls_pos" class="erp-tab-control-group"
+                    style="display: flex; gap: 0.75rem; align-items: center;">
+                </div>
+
                 <!-- Controls for Medicines -->
                 <div id="controls_medicines" class="erp-tab-control-group"
-                    style="display: flex; gap: 0.75rem; align-items: center;">
+                    style="display: none; gap: 0.75rem; align-items: center;">
                     <input type="text" onkeyup="filterSpecificTable('medTableBody', this.value)"
                         placeholder="🔍 Search products..." class="form-input"
                         style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
@@ -168,11 +643,87 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                         style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
                     <button onclick="openModal('categoryModal')" class="btn btn-primary">Add Category</button>
                 </div>
+
+                <!-- Controls for Logs -->
+                <div id="controls_logs" class="erp-tab-control-group"
+                    style="display: none; gap: 0.75rem; align-items: center;">
+                    <input type="text" id="logsSearch" onkeyup="filterSpecificTable('logsTableBody', this.value)"
+                        placeholder="🔍 Search logs..." class="form-input"
+                        style="width: 260px; background: white; border-radius: 2rem; padding-left: 1.25rem; margin-bottom: 0;">
+                    <button onclick="loadLogs()" class="btn btn-outline">Refresh Logs</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 0: POINT OF SALE ================= -->
+        <div id="tab_pos" class="tab-content active animate-fade">
+            <div class="pos-layout">
+                <!-- Left: Product Grid -->
+                <div>
+                    <div class="pos-search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" id="posSearchInput" placeholder="Search products..." oninput="filterPosProducts()">
+                    </div>
+                    <div class="pos-product-grid" id="posProductGrid">
+                        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+                            Loading products...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Cart Panel -->
+                <div class="pos-cart-panel">
+                    <div class="pos-cart-header">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            Cart
+                            <span class="pos-cart-count" id="posCartCount">0</span>
+                        </h3>
+                        <button class="pos-cart-clear" onclick="clearPosCart()">Clear All</button>
+                    </div>
+                    <div class="pos-cart-items" id="posCartItems">
+                        <div class="pos-cart-empty">Click products to add them to your cart</div>
+                    </div>
+                    <div class="pos-checkout">
+                        <div class="pos-total-row">
+                            <span class="pos-total-label">Subtotal</span>
+                            <span class="pos-total-value" id="posSubtotal">₱0.00</span>
+                        </div>
+                        <div class="pos-pay-group">
+                            <span class="peso-sign">₱</span>
+                            <input type="number" class="pos-pay-input" id="posAmountPaid" placeholder="Amount paid" min="0" step="0.01" oninput="updatePosChange()">
+                        </div>
+                        <div class="pos-total-row">
+                            <span class="pos-total-label">Change</span>
+                            <span class="pos-change-value" id="posChange">₱0.00</span>
+                        </div>
+                        <button class="pos-complete-btn" id="posCompleteBtn" disabled onclick="completeSale()">Complete Sale</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales History -->
+            <div class="pos-history-section">
+                <button class="pos-history-toggle" onclick="toggleSalesHistory()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Recent Sales History
+                    <svg id="posHistoryChevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="pos-history-list" id="posHistoryList">
+                    <div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.85rem;">Loading sales history...</div>
+                </div>
             </div>
         </div>
 
         <!-- ================= TAB 1: PRODUCTS SKU ================= -->
-        <div id="tab_medicines" class="tab-content active animate-fade">
+        <div id="tab_medicines" class="tab-content animate-fade">
             <div class="table-container">
                 <table>
                     <thead>
@@ -227,6 +778,26 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                         <tr>
                             <td colspan="2" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading
                                 categories...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= TAB 4: LOGS ================= -->
+        <div id="tab_logs" class="tab-content animate-fade">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 180px;">Date & Time</th>
+                            <th style="width: 200px;">Action Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading logs...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -943,7 +1514,333 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+        // ═══════════════════════════════════════════════════════
+        // POS SYSTEM LOGIC
+        // ═══════════════════════════════════════════════════════
+        let posProducts = [];
+        let posCart = []; // { product_id, name, price, quantity, maxStock }
+
+        function loadPosProducts() {
+            fetch(`api/pos.php?action=get_products&pharma=${pharmaCode}`)
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        posProducts = res.data;
+                        renderPosGrid();
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('posProductGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);">Failed to load products.</div>';
+                });
+        }
+
+        function renderPosGrid() {
+            const grid = document.getElementById('posProductGrid');
+            const query = document.getElementById('posSearchInput').value.toLowerCase();
+
+            const filtered = posProducts.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.generic_name.toLowerCase().includes(query) ||
+                p.category.toLowerCase().includes(query)
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);">No products match your search.</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => {
+                const stock = parseInt(p.stock);
+                const isOut = stock === 0;
+                const stockClass = isOut ? 'out' : (stock < 30 ? 'low' : 'in');
+                const stockLabel = isOut ? 'Out' : stock + ' left';
+                const price = parseFloat(p.price).toFixed(2);
+
+                return `
+                    <div class="pos-product-card ${isOut ? 'out-of-stock' : ''}" onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${stock})">
+                        <span class="pos-prod-name">${p.name}</span>
+                        <span class="pos-prod-generic">${p.generic_name}</span>
+                        <div class="pos-prod-bottom">
+                            <span class="pos-prod-price">₱${price}</span>
+                            <span class="pos-prod-stock ${stockClass}">${stockLabel}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function filterPosProducts() {
+            renderPosGrid();
+        }
+
+        function addToCart(productId, name, price, maxStock) {
+            const existing = posCart.find(i => i.product_id === productId);
+            if (existing) {
+                if (existing.quantity >= maxStock) {
+                    alert(`Cannot add more. Only ${maxStock} in stock.`);
+                    return;
+                }
+                existing.quantity++;
+            } else {
+                posCart.push({ product_id: productId, name, price: parseFloat(price), quantity: 1, maxStock });
+            }
+            renderCart();
+        }
+
+        function removeFromCart(productId) {
+            posCart = posCart.filter(i => i.product_id !== productId);
+            renderCart();
+        }
+
+        function updateCartQty(productId, newQty) {
+            const item = posCart.find(i => i.product_id === productId);
+            if (!item) return;
+
+            newQty = parseInt(newQty);
+            if (isNaN(newQty) || newQty < 1) {
+                removeFromCart(productId);
+                return;
+            }
+            if (newQty > item.maxStock) {
+                alert(`Cannot exceed available stock (${item.maxStock}).`);
+                newQty = item.maxStock;
+            }
+            item.quantity = newQty;
+            renderCart();
+        }
+
+        function incrementQty(productId) {
+            const item = posCart.find(i => i.product_id === productId);
+            if (!item) return;
+            if (item.quantity >= item.maxStock) {
+                alert(`Cannot exceed available stock (${item.maxStock}).`);
+                return;
+            }
+            item.quantity++;
+            renderCart();
+        }
+
+        function decrementQty(productId) {
+            const item = posCart.find(i => i.product_id === productId);
+            if (!item) return;
+            if (item.quantity <= 1) {
+                removeFromCart(productId);
+                return;
+            }
+            item.quantity--;
+            renderCart();
+        }
+
+        function clearPosCart() {
+            posCart = [];
+            renderCart();
+        }
+
+        function getCartTotal() {
+            return posCart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+        }
+
+        function renderCart() {
+            const container = document.getElementById('posCartItems');
+            const countEl = document.getElementById('posCartCount');
+            const subtotalEl = document.getElementById('posSubtotal');
+
+            const totalItems = posCart.reduce((s, i) => s + i.quantity, 0);
+            countEl.textContent = totalItems;
+
+            if (posCart.length === 0) {
+                container.innerHTML = '<div class="pos-cart-empty">Click products to add them to your cart</div>';
+                subtotalEl.textContent = '₱0.00';
+                updatePosChange();
+                return;
+            }
+
+            container.innerHTML = posCart.map(item => {
+                const subtotal = (item.price * item.quantity).toFixed(2);
+                return `
+                    <div class="pos-cart-item">
+                        <div class="pos-cart-item-info">
+                            <div class="pos-cart-item-name" title="${item.name}">${item.name}</div>
+                            <div class="pos-cart-item-price">₱${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div class="pos-cart-qty-controls">
+                            <button class="pos-cart-qty-btn" onclick="decrementQty(${item.product_id})">−</button>
+                            <input type="number" class="pos-cart-qty-input" value="${item.quantity}" min="1" max="${item.maxStock}" onchange="updateCartQty(${item.product_id}, this.value)">
+                            <button class="pos-cart-qty-btn" onclick="incrementQty(${item.product_id})">+</button>
+                        </div>
+                        <span class="pos-cart-item-subtotal">₱${subtotal}</span>
+                        <button class="pos-cart-item-remove" onclick="removeFromCart(${item.product_id})" title="Remove">&times;</button>
+                    </div>`;
+            }).join('');
+
+            subtotalEl.textContent = '₱' + getCartTotal().toFixed(2);
+            updatePosChange();
+        }
+
+        function updatePosChange() {
+            const total = getCartTotal();
+            const paid = parseFloat(document.getElementById('posAmountPaid').value) || 0;
+            const change = paid - total;
+            const changeEl = document.getElementById('posChange');
+            const btn = document.getElementById('posCompleteBtn');
+
+            if (total === 0 || paid < total) {
+                changeEl.textContent = '₱0.00';
+                changeEl.style.color = 'var(--text-muted)';
+                btn.disabled = true;
+            } else {
+                changeEl.textContent = '₱' + change.toFixed(2);
+                changeEl.style.color = 'var(--success)';
+                btn.disabled = false;
+            }
+        }
+
+        function completeSale() {
+            if (posCart.length === 0) {
+                alert('Cart is empty.');
+                return;
+            }
+
+            const total = getCartTotal();
+            const paid = parseFloat(document.getElementById('posAmountPaid').value) || 0;
+
+            if (paid < total) {
+                alert('Insufficient payment amount.');
+                return;
+            }
+
+            const btn = document.getElementById('posCompleteBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+
+            const payload = {
+                items: posCart.map(i => ({ product_id: i.product_id, quantity: i.quantity })),
+                amount_paid: paid
+            };
+
+            fetch(`api/pos.php?action=process_sale&pharma=${pharmaCode}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(`Sale completed!\nReceipt: ${data.receipt_no}\nTotal: ₱${parseFloat(data.total).toFixed(2)}\nPaid: ₱${parseFloat(data.paid).toFixed(2)}\nChange: ₱${parseFloat(data.change).toFixed(2)}`);
+
+                        // Reset POS
+                        posCart = [];
+                        document.getElementById('posAmountPaid').value = '';
+                        renderCart();
+                        loadPosProducts();
+                        loadSalesHistory();
+                        loadData(); // Refresh inventory tabs too
+
+                        // Show sync banner
+                        document.getElementById('syncBannerText').textContent = `POS Sale ${data.receipt_no} completed & synced!`;
+                        document.getElementById('syncBanner').style.display = 'flex';
+                    } else {
+                        alert('Sale failed: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    alert('Connection error while processing sale.');
+                    console.error(err);
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'Complete Sale';
+                });
+        }
+
+        // ── SALES HISTORY ──
+        function loadSalesHistory() {
+            fetch(`api/pos.php?action=get_history&pharma=${pharmaCode}`)
+                .then(r => r.json())
+                .then(res => {
+                    const list = document.getElementById('posHistoryList');
+                    if (res.status === 'success' && res.data && res.data.length > 0) {
+                        list.innerHTML = res.data.map(sale => {
+                            const date = new Date(sale.created_at);
+                            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' | ' + date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+                            const total = parseFloat(sale.total_amount).toFixed(2);
+
+                            return `
+                                <div class="pos-sale-row">
+                                    <span class="pos-sale-receipt">${sale.receipt_no}</span>
+                                    <span class="pos-sale-items">${sale.items_summary || 'No items'}</span>
+                                    <span class="pos-sale-total">₱${total}</span>
+                                    <span class="pos-sale-time">${timeStr}</span>
+                                </div>`;
+                        }).join('');
+                    } else {
+                        list.innerHTML = '<div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.85rem;">No sales recorded yet.</div>';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('posHistoryList').innerHTML = '<div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.85rem;">Failed to load sales history.</div>';
+                });
+        }
+
+        function toggleSalesHistory() {
+            const list = document.getElementById('posHistoryList');
+            const chevron = document.getElementById('posHistoryChevron');
+            list.classList.toggle('open');
+            chevron.style.transform = list.classList.contains('open') ? 'rotate(180deg)' : '';
+        }
+
+        function loadLogs() {
+            fetch(`api/logs.php?pharma=${pharmaCode}`)
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('logsTableBody');
+                    if (res.status === 'success') {
+                        if (res.data.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">No logs found.</td></tr>';
+                            return;
+                        }
+                        
+                        let html = '';
+                        res.data.forEach(log => {
+                            // Format date nicely
+                            const dateObj = new Date(log.created_at);
+                            const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            
+                            // Color code actions
+                            let badgeClass = 'bg-gray-100 text-gray-800';
+                            if (log.action === 'POS_SALE_COMPLETED') badgeClass = 'bg-green-100 text-green-800';
+                            else if (log.action === 'INVENTORY_UPDATE') badgeClass = 'bg-blue-100 text-blue-800';
+                            else if (log.action === 'STORE_STATUS') badgeClass = 'bg-purple-100 text-purple-800';
+
+                            html += `
+                                <tr>
+                                    <td style="font-size: 0.85rem; color: var(--text-muted);">${dateStr}</td>
+                                    <td>
+                                        <span style="display: inline-block; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; 
+                                            ${badgeClass === 'bg-green-100 text-green-800' ? 'background: #d1fae5; color: #065f46;' : 
+                                              badgeClass === 'bg-blue-100 text-blue-800' ? 'background: #dbeafe; color: #1e40af;' : 
+                                              badgeClass === 'bg-purple-100 text-purple-800' ? 'background: #f3e8ff; color: #6b21a8;' : 
+                                              'background: #f3f4f6; color: #374151;'}">
+                                            ${log.action.replace(/_/g, ' ')}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 0.9rem;">${log.message}</td>
+                                </tr>
+                            `;
+                        });
+                        tbody.innerHTML = html;
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="3" style="color:red; text-align:center;">Failed to load logs: ${res.message}</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('logsTableBody').innerHTML = '<tr><td colspan="3" style="color:red; text-align:center;">Error connecting to server.</td></tr>';
+                });
+        }
+
         loadData();
+        loadPosProducts();
+        loadSalesHistory();
+        loadLogs();
     </script>
 </body>
 

@@ -136,12 +136,16 @@ $activePage = 'home';
                         const barColor = stock === 0 ? '#EF4444' : (stock < 30 ? '#F59E0B' : '#2563EB');
                         const price    = parseFloat(med.price).toFixed(2);
 
+                        const safePharmaName = med.pharmacy_name ? med.pharmacy_name.replace(/"/g, '&quot;') : '';
+                        const safeAddress = med.pharmacy_address ? med.pharmacy_address.replace(/"/g, '&quot;') : '';
+                        const safeContact = med.contact_number ? med.contact_number.replace(/"/g, '&quot;') : '';
+
                         html += `
-                        <div class="local-card">
+                        <div class="local-card" data-name="${safePharmaName}" data-address="${safeAddress}" data-contact="${safeContact}" data-open="${med.is_open}" onclick="showPharmaDetails(this)">
                             <div class="local-card-top">
                                 <div class="local-card-info">
                                     <p class="local-drug-name">${med.brand_name} <span class="local-generic">(${med.generic_name})</span></p>
-                                    <a class="local-pharmacy-link">${med.pharmacy_name}</a>
+                                    <span class="local-pharmacy-link">${med.pharmacy_name}</span>
                                 </div>
                                 <div class="local-price-wrap">
                                     <span class="local-price">₱${price}</span>
@@ -293,10 +297,49 @@ $activePage = 'home';
         document.body.style.overflow = '';
     }
 
+    function showPharmaDetails(element) {
+        const name = element.getAttribute('data-name');
+        const address = element.getAttribute('data-address');
+        const contact = element.getAttribute('data-contact');
+        const isOpen = element.getAttribute('data-open') === '1' || element.getAttribute('data-open') === 'true';
+
+        document.getElementById('pharmaModalName').innerText = name;
+        
+        const statusEl = document.getElementById('pharmaModalStatus');
+        if (isOpen) {
+            statusEl.innerText = 'OPEN';
+            statusEl.className = 'pharm-status open';
+        } else {
+            statusEl.innerText = 'CLOSED';
+            statusEl.className = 'pharm-status closed';
+        }
+
+        document.getElementById('pharmaModalAddress').innerText = address || 'No address listed';
+        document.getElementById('pharmaModalPhone').innerText = contact || 'No contact number listed';
+
+        const mapQuery = encodeURIComponent(name + ", Basud, Camarines Norte");
+        document.getElementById('pharmaModalMap').src = `https://maps.google.com/maps?q=${mapQuery}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+
+        const modal = document.getElementById('pharmacyModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePharmaModal() {
+        const modal = document.getElementById('pharmacyModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('pharmaModalMap').src = '';
+    }
+
     window.addEventListener('click', e => {
-        const modal = document.getElementById('fdaModal');
-        if (e.target === modal) {
+        const fdaModal = document.getElementById('fdaModal');
+        const pharmaModal = document.getElementById('pharmacyModal');
+        if (e.target === fdaModal) {
             closeFdaModal();
+        }
+        if (e.target === pharmaModal) {
+            closePharmaModal();
         }
     });
 </script>
@@ -340,6 +383,42 @@ $activePage = 'home';
         </div>
         <div class="fda-modal-footer" style="justify-content: center;">
             <span class="fda-badge">✓ FDA APPROVED REFERENCE</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── PHARMACY LOCATION DETAIL MODAL ── -->
+<div id="pharmacyModal" class="fda-modal">
+    <div class="fda-modal-content">
+        <div class="fda-modal-header">
+            <div>
+                <h2 id="pharmaModalName" class="modal-brand">Pharmacy Name</h2>
+                <div style="margin-top: 0.5rem; display: flex; align-items: center;">
+                    <span id="pharmaModalStatus" class="pharm-status">OPEN</span>
+                </div>
+            </div>
+            <span class="modal-close" onclick="closePharmaModal()">&times;</span>
+        </div>
+        <div class="fda-modal-body">
+            <div class="modal-section-grid">
+                <div class="modal-section">
+                    <h4 class="section-subtitle">Address</h4>
+                    <div id="pharmaModalAddress" class="modal-text">...</div>
+                </div>
+                <div class="modal-section">
+                    <h4 class="section-subtitle">Contact Number</h4>
+                    <div id="pharmaModalPhone" class="modal-text">...</div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h4 class="section-subtitle">Location Map</h4>
+                <!-- Google Maps Embed Container -->
+                <iframe id="pharmaModalMap" src="" style="width: 100%; height: 280px; border-radius: 8px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); z-index: 1;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <div class="fda-modal-footer" style="justify-content: center;">
+            <span class="fda-badge" id="pharmaModalBadge">✓ REGISTERED PHARMACY</span>
         </div>
     </div>
 </div>
