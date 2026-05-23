@@ -1,5 +1,7 @@
 <?php
-// customer_about.php
+// ── 1. Shared session logic ──
+require_once 'includes/session_guard.php';
+
 $activePage = 'about';
 ?>
 <!DOCTYPE html>

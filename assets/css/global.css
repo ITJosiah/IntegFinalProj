@@ -158,6 +158,63 @@ body {
     transform: scale(1.05);
 }
 
+.portal-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.75rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    border: 1.5px solid var(--primary-mid);
+    transition: var(--transition);
+}
+
+.portal-badge:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.portal-badge.static {
+    cursor: default;
+}
+
+.portal-badge.static:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary-mid);
+    transform: none;
+}
+
+.btn-switch-role {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.875rem;
+    border-radius: 6px;
+    border: 1.5px solid var(--primary-mid);
+    background: var(--primary-light);
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-switch-role:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
 /* ── FOOTER ── */
 .site-footer {
     display: flex;

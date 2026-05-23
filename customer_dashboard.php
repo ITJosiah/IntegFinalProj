@@ -1,4 +1,7 @@
 <?php
+// ── 1. Shared session logic ──
+require_once 'includes/session_guard.php';
+
 $activePage = 'home';
 ?>
 <!DOCTYPE html>

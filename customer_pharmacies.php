@@ -1,8 +1,11 @@
 <?php
-// ── 1. Shared db connection ──
+// ── 1. Shared session logic ──
+require_once 'includes/session_guard.php';
+
+// ── 2. Shared db connection ──
 require_once 'api/config/db.php';
 
-// ── 2. Set active nav tab for this page ──
+// ── 3. Set active nav tab for this page ──
 $activePage = 'pharmacies';
 
 // Fetch dynamic pharmacy directory from core database
