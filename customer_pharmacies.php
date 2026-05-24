@@ -10,7 +10,7 @@ $activePage = 'pharmacies';
 
 // Fetch dynamic pharmacy directory from core database
 $coreDB = getDBConnection('pharmasync_core');
-$stmt = $coreDB->query("SELECT id, name, code, address, contact_number, email, latitude, longitude, is_open FROM pharmacies ORDER BY id ASC");
+$stmt = $coreDB->query("SELECT id, name, code, address, contact_number, email, latitude, longitude, is_open FROM pharmacies ORDER BY name ASC");
 $pharmacies = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -27,7 +27,7 @@ $pharmacies = $stmt->fetchAll();
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             padding: 0.6rem 0.85rem;
             background: #F8FAFC;
             border: 1px solid var(--border);
@@ -114,6 +114,14 @@ $pharmacies = $stmt->fetchAll();
 
                 <!-- ── LEFT: PHARMACY LISTINGS ── -->
                 <div class="pharm-listings">
+
+                    <!-- Search Bar -->
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position: absolute; left: 1rem; color: #94A3B8;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="pharmacySearchInput" oninput="filterPharmacies()" placeholder="Search pharmacies by name..." style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border); font-size: 0.95rem; font-family: inherit; color: var(--text-main); outline: none; transition: border-color 0.2s, box-shadow 0.2s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37,99,235,0.1)';" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';">
+                        </div>
+                    </div>
 
                     <!-- Sort Toggle Bar -->
                     <div class="sort-bar" id="sortBar">
@@ -231,7 +239,11 @@ $pharmacies = $stmt->fetchAll();
                         </div>
 
                         <!-- Google Maps Embed Container -->
-                        <iframe id="googleMap" src="https://maps.google.com/maps?q=Laurent's%20Pharmacy,%20Basud,%20Camarines%20Norte&t=&z=16&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 500px; border-radius: 8px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 0.5rem; z-index: 1;" allowfullscreen="" loading="lazy"></iframe>
+                        <?php 
+                            $defaultPharmaName = !empty($pharmacies) ? $pharmacies[0]['name'] : 'Basud, Camarines Norte';
+                            $mapQuery = urlencode($defaultPharmaName . ", Basud, Camarines Norte");
+                        ?>
+                        <iframe id="googleMap" src="https://maps.google.com/maps?q=<?= $mapQuery ?>&t=&z=16&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 500px; border-radius: 8px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 0.5rem; z-index: 1;" allowfullscreen="" loading="lazy"></iframe>
                     </div>
 
 
@@ -251,7 +263,7 @@ $pharmacies = $stmt->fetchAll();
     let userLat = null;
     let userLng = null;
     let locationReady = false;
-    let currentSort = 'nearest';
+    let currentSort = 'alpha';
 
     // ── Geolocation ──
     if (navigator.geolocation) {
@@ -360,6 +372,20 @@ $pharmacies = $stmt->fetchAll();
 
         // Re-order DOM
         cards.forEach(card => list.appendChild(card));
+    }
+
+    function filterPharmacies() {
+        const query = document.getElementById('pharmacySearchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.pharm-card');
+        
+        cards.forEach(card => {
+            const name = (card.getAttribute('data-name') || '').toLowerCase();
+            if (name.includes(query)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     }
 
     function focusPharmacyOnMap(name) {
