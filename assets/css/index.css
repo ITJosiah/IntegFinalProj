@@ -396,9 +396,32 @@ tr:hover {
     align-items: center;
     justify-content: center;
 }
+
 .btn-switch-role:hover {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
     transform: translateY(-1px);
+}
+
+/* Remember Me Checkbox */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+}
+.remember-me input[type="checkbox"] {
+    accent-color: var(--primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.remember-me label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
 }

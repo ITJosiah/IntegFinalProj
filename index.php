@@ -60,6 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
+                if (isset($_POST['remember'])) {
+                    setcookie('remember_user', $username, time() + (86400 * 30), "/");
+                } else {
+                    setcookie('remember_user', '', time() - 3600, "/");
+                }
                 $_SESSION['user_role'] = 'admin';
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
@@ -74,6 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
+                if (isset($_POST['remember'])) {
+                    setcookie('remember_user', $username, time() + (86400 * 30), "/");
+                } else {
+                    setcookie('remember_user', '', time() - 3600, "/");
+                }
                 $pharmaCode = $user['code'];
                 $_SESSION['user_role'] = 'pharmacy';
                 $_SESSION['pharma_code'] = $pharmaCode;
@@ -89,6 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
+                if (isset($_POST['remember'])) {
+                    setcookie('remember_user', $username, time() + (86400 * 30), "/");
+                } else {
+                    setcookie('remember_user', '', time() - 3600, "/");
+                }
                 $_SESSION['user_role'] = 'customer';
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['full_name'];
@@ -437,7 +452,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="input-group">
                         <input type="text" name="username" class="input-field" placeholder="Username" required
                             autocomplete="username" id="loginUsername"
-                            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+                            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : (isset($_COOKIE['remember_user']) ? htmlspecialchars($_COOKIE['remember_user']) : ''); ?>">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -451,6 +466,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
+                    </div>
+
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember" <?php echo isset($_COOKIE['remember_user']) ? 'checked' : ''; ?>>
+                        <label for="remember">Remember me</label>
                     </div>
 
                     <button type="submit" class="btn-sign-in" id="btnSignIn">Sign In</button>
