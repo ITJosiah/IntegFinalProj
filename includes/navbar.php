@@ -41,7 +41,14 @@ $pharmaName = $pharmaNames[$pharmaCode] ?? "Pharmacy Portal";
             <span>Pharma<span class="sync-part" style="color: black;">Sync</span></span>
         </a>
 
-        <ul class="nav-tabs">
+        <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+        <div class="mobile-drawer" id="mobileDrawer">
+            <div class="drawer-header">
+                <span style="font-weight: 800; color: var(--primary); font-size: 1.25rem;">Menu</span>
+                <button class="drawer-close-btn" onclick="toggleMobileMenu()">&times;</button>
+            </div>
+            
+            <ul class="nav-tabs">
             <?php foreach ($navItems as $key => $item): ?>
                 <li>
                     <a href="<?= htmlspecialchars($item['href']) ?>"
@@ -189,5 +196,22 @@ $pharmaName = $pharmaNames[$pharmaCode] ?? "Pharmacy Portal";
                 <a href="register.php" class="btn-switch-role">Register</a>
             <?php endif; ?>
         </div>
+        </div>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
     </div>
 </nav>
+
+<script>
+    function toggleMobileMenu() {
+        document.getElementById('mobileDrawer').classList.toggle('open');
+        document.getElementById('mobileOverlay').classList.toggle('open');
+    }
+</script>

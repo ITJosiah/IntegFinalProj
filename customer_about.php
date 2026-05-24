@@ -28,25 +28,7 @@ $activePage = 'about';
 
                 <!-- ── SPLIT LAYOUT ── -->
                 <div class="about-split-layout">
-                    <!-- Left Column: Info -->
-                    <div class="about-info-col">
-                        <section class="about-hero">
-                            <h1 class="about-title">
-                                PharmaSync <span>Basud</span>
-                            </h1>
-                            <p class="about-subtitle">
-                                PharmaSync Basud is a real-time decentralized health-system middleware designed to integrate and unify the inventories of independent local pharmacies across Poblacion, Basud, Camarines Norte.
-                            </p>
-                            <p class="about-subtitle" style="margin-top: 1rem;">
-                                By leveraging standard relational database normalization, direct Google Maps search embedding, and parallel openFDA integrations, our platform provides guest residents and local healthcare providers with seamless, instant medication searches, pharmacy directions, and critical clinical drug guidelines without requiring any registration or accounts.
-                            </p>
-                            <p class="about-subtitle" style="margin-top: 1rem;">
-                                This digital portal acts as a vital municipal utility, bridging the gap between local stock and the community during everyday needs and emergencies alike.
-                            </p>
-                        </section>
-                    </div>
-
-                    <!-- Right Column: Email Form -->
+                    <!-- Left Column: Email Form -->
                     <div class="about-form-col">
                         <section class="contact-section">
                             <div class="glass-card contact-card animate-fade">
@@ -95,6 +77,24 @@ $activePage = 'about';
                                     </button>
                                 </form>
                             </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column: Info -->
+                    <div class="about-info-col">
+                        <section class="about-hero">
+                            <h1 class="about-title">
+                                PharmaSync <span>Basud</span>
+                            </h1>
+                            <p class="about-subtitle">
+                                PharmaSync Basud is a real-time decentralized health-system middleware designed to integrate and unify the inventories of independent local pharmacies across Poblacion, Basud, Camarines Norte.
+                            </p>
+                            <p class="about-subtitle" style="margin-top: 1rem;">
+                                By leveraging standard relational database normalization, direct Google Maps search embedding, and parallel openFDA integrations, our platform provides guest residents and local healthcare providers with seamless, instant medication searches, pharmacy directions, and critical clinical drug guidelines without requiring any registration or accounts.
+                            </p>
+                            <p class="about-subtitle" style="margin-top: 1rem;">
+                                This digital portal acts as a vital municipal utility, bridging the gap between local stock and the community during everyday needs and emergencies alike.
+                            </p>
                         </section>
                     </div>
                 </div>
