@@ -1,5 +1,5 @@
 <?php
-// includes/navbar.php - Auto-detection version
+// includes/navbar.php - Auto-detection version with customer/guest awareness
 
 $navItems = [
         'home'        => ['label' => 'Home',         'href' => 'customer_dashboard.php'],
@@ -52,25 +52,36 @@ $pharmaName = $pharmaNames[$pharmaCode] ?? "Pharmacy Portal";
             <?php endforeach; ?>
         </ul>
 
-        <div class="nav-user" style="display: flex; align-items: center;">
-            <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] === 'pharmacy')): ?>
-                <!-- If logged in as staff/admin, show portal badge and logout -->
-                <?php if ($_SESSION['user_role'] === 'admin'): ?>
-                    <a href="admin_dashboard.php" class="portal-badge" title="Go to Admin Dashboard">
-                        ADMIN PORTAL: <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?>
-                    </a>
-                <?php else: ?>
-                    <a href="pharmacy_dashboard.php?pharma=<?= urlencode($pharmaCode) ?>" class="portal-badge" title="Go to Pharmacy Dashboard">
-                        PORTAL: <?= htmlspecialchars($pharmaName) ?>
-                    </a>
-                <?php endif; ?>
+        <div class="nav-user" style="display: flex; align-items: center; gap: 0.5rem;">
+            <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+                <!-- Admin portal badge + logout -->
+                <a href="admin_dashboard.php" class="portal-badge" title="Go to Admin Dashboard">
+                    ADMIN PORTAL: <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?>
+                </a>
                 <a href="logout.php" class="btn-switch-role">Logout</a>
-            <?php else: ?>
-                <!-- If guest customer, show Portal: Customer and Logout -->
-                <span class="portal-badge static">
-                    PORTAL: CUSTOMER
+
+            <?php elseif (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'pharmacy'): ?>
+                <!-- Pharmacy portal badge + logout -->
+                <a href="pharmacy_dashboard.php?pharma=<?= urlencode($pharmaCode) ?>" class="portal-badge" title="Go to Pharmacy Dashboard">
+                    PORTAL: <?= htmlspecialchars($pharmaName) ?>
+                </a>
+                <a href="logout.php" class="btn-switch-role">Logout</a>
+
+            <?php elseif (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'customer'): ?>
+                <!-- Logged-in customer: show name + logout -->
+                <span class="portal-badge static" style="background: #D1FAE5; color: #065F46; border-color: #A7F3D0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 0.2rem; vertical-align: -1px;">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <?= htmlspecialchars($_SESSION['user_name']) ?>
                 </span>
                 <a href="logout.php" class="btn-switch-role">Logout</a>
+
+            <?php else: ?>
+                <!-- Guest: show login + register -->
+                <a href="index.php" class="btn-switch-role" style="background: var(--primary); color: white; border-color: var(--primary);">Sign In</a>
+                <a href="register.php" class="btn-switch-role">Register</a>
             <?php endif; ?>
         </div>
     </div>

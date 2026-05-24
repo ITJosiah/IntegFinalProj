@@ -7,7 +7,7 @@ $results = [];
 
 // 1. Get Pharmacy Statuses from Core DB
 $coreDB = getDBConnection('pharmasync_core');
-$stmt = $coreDB->query("SELECT code, name, address, contact_number, is_open FROM pharmacies");
+$stmt = $coreDB->query("SELECT code, name, address, contact_number, is_open, latitude, longitude FROM pharmacies");
 $pharmacies = [];
 while ($row = $stmt->fetch()) {
     $pharmacies[$row['code']] = $row;
@@ -53,6 +53,8 @@ foreach ($dbs as $code => $dbName) {
         $med['pharmacy_address'] = $pharmaInfo['address'];
         $med['contact_number'] = $pharmaInfo['contact_number'];
         $med['is_open'] = $pharmaInfo['is_open'];
+        $med['pharmacy_lat'] = $pharmaInfo['latitude'];
+        $med['pharmacy_lng'] = $pharmaInfo['longitude'];
 
         if ($med['stock'] > 50) {
             $med['availability'] = 'In Stock';

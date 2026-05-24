@@ -96,12 +96,51 @@ $activePage = 'home';
 
 <script>
     let activeFdaResults = [];
+    let userLat = null;
+    let userLng = null;
+    let locationReady = false;
 
     document.getElementById('searchInput').addEventListener('keypress', e => {
         if (e.key === 'Enter') searchMedications();
     });
 
     const MAX_STOCK = 500; // for progress bar scaling
+
+    // ── Geolocation: request user's current position ──
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                userLat = pos.coords.latitude;
+                userLng = pos.coords.longitude;
+                locationReady = true;
+                // Send to server to persist in session
+                fetch('api/update_location.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ latitude: userLat, longitude: userLng })
+                }).catch(() => {});
+            },
+            () => { /* user denied or error — location features disabled */ },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+
+    // Haversine distance in km
+    function haversineKm(lat1, lng1, lat2, lng2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function distanceBadgeHTML(distKm) {
+        if (distKm === null) return '';
+        const label = distKm < 1 ? `${Math.round(distKm * 1000)}m away` : `${distKm.toFixed(1)} km away`;
+        return `<span class="distance-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:2px;vertical-align:-1px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${label}</span>`;
+    }
 
     function spinnerHTML() {
         return `<div class="ld-spinner-wrap"><div class="ld-spinner"></div><span>Fetching…</span></div>`;
@@ -131,8 +170,28 @@ $activePage = 'home';
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'success' && res.data && res.data.length > 0) {
+                    let items = res.data;
+
+                    // Calculate distance for each item
+                    items.forEach(med => {
+                        if (locationReady && med.pharmacy_lat && med.pharmacy_lng) {
+                            med._distance = haversineKm(userLat, userLng, parseFloat(med.pharmacy_lat), parseFloat(med.pharmacy_lng));
+                        } else {
+                            med._distance = null;
+                        }
+                    });
+
+                    // Sort by distance if location is available
+                    if (locationReady) {
+                        items.sort((a, b) => {
+                            if (a._distance === null) return 1;
+                            if (b._distance === null) return -1;
+                            return a._distance - b._distance;
+                        });
+                    }
+
                     let html = '';
-                    res.data.forEach(med => {
+                    items.forEach(med => {
                         const stock    = parseInt(med.stock) || 0;
                         const maxStock = MAX_STOCK;
                         const pct      = Math.min(100, Math.round((stock / maxStock) * 100));
@@ -152,7 +211,7 @@ $activePage = 'home';
                                         <span class="local-generic">(${med.generic_name})</span>
                                         <span class="drug-badge ${parseInt(med.prescription_required) === 1 ? 'rx' : 'otc'}">${parseInt(med.prescription_required) === 1 ? 'Rx' : 'OTC'}</span>
                                     </p>
-                                    <span class="local-pharmacy-link">${med.pharmacy_name}</span>
+                                    <span class="local-pharmacy-link">${med.pharmacy_name} ${distanceBadgeHTML(med._distance)}</span>
                                 </div>
                                 <div class="local-price-wrap">
                                     <span class="local-price">₱${price}</span>

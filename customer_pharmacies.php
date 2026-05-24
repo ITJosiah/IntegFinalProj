@@ -21,6 +21,78 @@ $pharmacies = $stmt->fetchAll();
     <title>Pharmacy Directory - PharmaSync</title>
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/customer_pharmacies.css">
+    <style>
+        /* Sort Toggle Bar */
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 0.6rem 0.85rem;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+        }
+        .sort-bar-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .sort-toggle {
+            display: flex;
+            background: #E2E8F0;
+            border-radius: 0.5rem;
+            padding: 0.2rem;
+            gap: 0.15rem;
+        }
+        .sort-toggle-btn {
+            padding: 0.4rem 0.85rem;
+            border-radius: 0.4rem;
+            border: none;
+            background: transparent;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .sort-toggle-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .sort-toggle-btn:hover:not(.active) {
+            color: var(--text-main);
+        }
+
+        /* Distance Badge on Pharmacy Cards */
+        .pharm-distance {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #059669;
+            background: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            padding: 0.2rem 0.6rem;
+            border-radius: 2rem;
+            margin-top: 0.5rem;
+            gap: 0.25rem;
+        }
+
+        .location-notice {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -44,6 +116,36 @@ $pharmacies = $stmt->fetchAll();
 
                 <!-- ── LEFT: PHARMACY LISTINGS ── -->
                 <div class="pharm-listings">
+
+                    <!-- Sort Toggle Bar -->
+                    <div class="sort-bar" id="sortBar">
+                        <span class="sort-bar-label">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="6" x2="16" y2="6"></line>
+                                <line x1="4" y1="12" x2="12" y2="12"></line>
+                                <line x1="4" y1="18" x2="8" y2="18"></line>
+                            </svg>
+                            Sort by
+                        </span>
+                        <div class="sort-toggle">
+                            <button class="sort-toggle-btn active" id="sortAlpha" onclick="sortPharmacies('alpha')">Alphabetical</button>
+                            <button class="sort-toggle-btn" id="sortNearest" onclick="sortPharmacies('nearest')">Nearest</button>
+                        </div>
+                    </div>
+
+                    <!-- Location notice (shown when nearest sort is selected but no location) -->
+                    <div id="locationNotice" style="display: none; margin-bottom: 0.75rem;">
+                        <span class="location-notice">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Enable location access in your browser to sort by nearest.
+                        </span>
+                    </div>
+
+                    <div id="pharmacyList">
                     <?php if (empty($pharmacies)): ?>
                         <div class="pharm-card" style="text-align: center; padding: 3rem; color: var(--text-muted);">
                             <p style="font-size: 1.1rem; font-weight: 600; margin: 0 0 0.5rem;">No pharmacies registered</p>
@@ -51,7 +153,10 @@ $pharmacies = $stmt->fetchAll();
                         </div>
                     <?php else: ?>
                         <?php foreach ($pharmacies as $pharm): ?>
-                            <div class="pharm-card" id="pharm-card-<?= $pharm['id'] ?>">
+                            <div class="pharm-card" id="pharm-card-<?= $pharm['id'] ?>"
+                                 data-name="<?= htmlspecialchars($pharm['name']) ?>"
+                                 data-lat="<?= $pharm['latitude'] ?>"
+                                 data-lng="<?= $pharm['longitude'] ?>">
                                 <div class="pharm-card-header">
                                     <div class="pharm-info">
                                         <h3 class="pharm-name"><?= htmlspecialchars($pharm['name']) ?></h3>
@@ -89,6 +194,14 @@ $pharmacies = $stmt->fetchAll();
                                             <strong style="color: var(--text-main); margin-right: 0.25rem;">Email:</strong>
                                             <span><?= htmlspecialchars($pharm['email'] ?? '—') ?></span>
                                         </div>
+
+                                        <!-- Distance Badge (hidden until location is available) -->
+                                        <div class="pharm-distance-wrap" style="display: none;">
+                                            <span class="pharm-distance">
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                                <span class="dist-value">—</span>
+                                            </span>
+                                        </div>
                                     </div>
                                     <span class="pharm-status <?= $pharm['is_open'] ? 'open' : 'closed' ?>">
                                         <?= $pharm['is_open'] ? 'OPEN' : 'CLOSED' ?>
@@ -103,6 +216,7 @@ $pharmacies = $stmt->fetchAll();
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                    </div>
                 </div>
 
                 <!-- ── RIGHT: MAP + EMERGENCY CARD ── -->
@@ -115,7 +229,7 @@ $pharmacies = $stmt->fetchAll();
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--primary);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                 Live Location Map
                             </h3>
-                            <span style="font-size:0.75rem; background:var(--primary-light); color:var(--primary); padding:0.25rem 0.6rem; border-radius:1rem; font-weight:700;">3 PHARMACIES</span>
+                            <span style="font-size:0.75rem; background:var(--primary-light); color:var(--primary); padding:0.25rem 0.6rem; border-radius:1rem; font-weight:700;"><?= count($pharmacies) ?> PHARMACIES</span>
                         </div>
 
                         <!-- Google Maps Embed Container -->
@@ -134,15 +248,108 @@ $pharmacies = $stmt->fetchAll();
 <!-- Shared footer -->
 <?php require_once 'includes/footer.php'; ?>
 
-<!-- Google Maps Embed Script -->
+<!-- Google Maps Embed Script + Sort + Distance Logic -->
 <script>
+    let userLat = null;
+    let userLng = null;
+    let locationReady = false;
+    let currentSort = 'alpha';
+
+    // ── Geolocation ──
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                userLat = pos.coords.latitude;
+                userLng = pos.coords.longitude;
+                locationReady = true;
+
+                // Send to server
+                fetch('api/update_location.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ latitude: userLat, longitude: userLng })
+                }).catch(() => {});
+
+                // Calculate and show distance badges
+                updateDistanceBadges();
+            },
+            () => { /* denied */ },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+
+    // Haversine
+    function haversineKm(lat1, lng1, lat2, lng2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function updateDistanceBadges() {
+        if (!locationReady) return;
+        const cards = document.querySelectorAll('.pharm-card[data-lat]');
+        cards.forEach(card => {
+            const lat = parseFloat(card.getAttribute('data-lat'));
+            const lng = parseFloat(card.getAttribute('data-lng'));
+            if (isNaN(lat) || isNaN(lng)) return;
+
+            const dist = haversineKm(userLat, userLng, lat, lng);
+            const label = dist < 1 ? `${Math.round(dist * 1000)}m away` : `${dist.toFixed(1)} km away`;
+
+            card.setAttribute('data-distance', dist);
+            const badge = card.querySelector('.pharm-distance-wrap');
+            const valEl = card.querySelector('.dist-value');
+            if (badge && valEl) {
+                valEl.textContent = label;
+                badge.style.display = '';
+            }
+        });
+    }
+
+    function sortPharmacies(mode) {
+        currentSort = mode;
+
+        // Update toggle UI
+        document.getElementById('sortAlpha').classList.toggle('active', mode === 'alpha');
+        document.getElementById('sortNearest').classList.toggle('active', mode === 'nearest');
+
+        const list = document.getElementById('pharmacyList');
+        const cards = Array.from(list.querySelectorAll('.pharm-card[data-lat]'));
+
+        if (mode === 'nearest') {
+            if (!locationReady) {
+                document.getElementById('locationNotice').style.display = '';
+                return;
+            }
+            document.getElementById('locationNotice').style.display = 'none';
+
+            cards.sort((a, b) => {
+                const da = parseFloat(a.getAttribute('data-distance')) || 9999;
+                const db = parseFloat(b.getAttribute('data-distance')) || 9999;
+                return da - db;
+            });
+        } else {
+            document.getElementById('locationNotice').style.display = 'none';
+            cards.sort((a, b) => {
+                const na = (a.getAttribute('data-name') || '').toLowerCase();
+                const nb = (b.getAttribute('data-name') || '').toLowerCase();
+                return na.localeCompare(nb);
+            });
+        }
+
+        // Re-order DOM
+        cards.forEach(card => list.appendChild(card));
+    }
+
     function focusPharmacyOnMap(name) {
         const iframe = document.getElementById('googleMap');
-        // Query Google Maps using the exact official registered business name + city for 100% accurate pinning
         const query = encodeURIComponent(name + ", Basud, Camarines Norte");
         iframe.src = `https://maps.google.com/maps?q=${query}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
         
-        // Scroll map gracefully on smaller screens
         iframe.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 </script>
