@@ -3,23 +3,24 @@
 
 function getDBConnection($dbName = '')
 {
-    // ---------------------------------------------------------
-    // LOCALHOST CONFIGURATION (For Development)
-    // ---------------------------------------------------------
-    $host = '127.0.0.1';
-    $user = 'root';
-    $pass = ''; // Default XAMPP has no password
-    $charset = 'utf8mb4';
-    $realDbName = 'pharmasync_db'; // The unified local database
-    
-    // ---------------------------------------------------------
-    // AWARDSPACE CONFIGURATION (Commented out for now)
-    // ---------------------------------------------------------
-    // $host = 'fdb1032.awardspace.net';
-    // $user = '4760236_pharmasyncdb';
-    // $pass = 'AWARDjosiah1'; 
-    // $realDbName = '4760236_pharmasyncdb';
+    // Auto-detect environment: local vs online (AwardSpace)
+    $isLocal = (php_sapi_name() === 'cli') || in_array($_SERVER['HTTP_HOST'] ?? '', ['127.0.0.1', 'localhost', 'localhost:8000']);
 
+    if ($isLocal) {
+        // LOCALHOST CONFIGURATION (For Development)
+        $host = '127.0.0.1';
+        $user = 'root';
+        $pass = ''; // Default XAMPP has no password
+        $realDbName = 'pharmasync_db'; // The unified local database
+    } else {
+        // AWARDSPACE CONFIGURATION (Live Deployment)
+        $host = 'fdb1032.awardspace.net';
+        $user = '4760236_pharmasyncdb';
+        $pass = 'AWARDjosiah1'; 
+        $realDbName = '4760236_pharmasyncdb';
+    }
+    
+    $charset = 'utf8mb4';
     $dsn = "mysql:host=$host;dbname=$realDbName;charset=$charset";
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
