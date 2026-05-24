@@ -208,6 +208,58 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
             background: #475569;
             border-radius: 4px;
         }
+
+        /* Modal Styles matching Customer Dashboard */
+        .fda-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: flex-start;
+            justify-content: center;
+            padding: 4rem 1.5rem 1.5rem 1.5rem;
+        }
+
+        .fda-modal-content {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid #E2E8F0;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .fda-modal-header {
+            padding: 1.5rem 1.75rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: #FAFBFD;
+        }
+
+        .fda-modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            background: #F8FAFC;
+        }
     </style>
 </head>
 
@@ -224,86 +276,56 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
                 <span><span style="color: var(--primary);">Pharma</span><span>Sync</span></span>
             </a>
             <div class="nav-links">
-                <span
-                    style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL:
-                    <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                <span onclick="openEditProfileModal()" class="portal-badge"
+                    style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s ease;">PORTAL:
+                    <span id="portalUserName"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span></span>
                 <a href="logout.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
     </nav>
 
     <main class="container animate-fade" style="margin-top:2rem; padding: 0 2rem;">
-        <div style="text-align: center; margin-bottom: 3rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
             <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">System
                 Admin Console</h1>
-            <p
-                style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">
-                Real-time node coordination and middleware health statistics.</p>
         </div>
 
-        <!-- Hero Connectivity Grid wrapped in a premium box -->
-        <div class="metric-card" style="margin-bottom: 2.5rem; padding: 2rem; background: #F0F7FF; border: 1px solid #D1E7FF;">
-            <h2
-                style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); margin-top: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
-                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
-                </svg>
-                Active Middleware Node Status
-            </h2>
-            <div class="nodes-grid" id="nodeContainer" style="margin-bottom: 0;">
-                <!-- Dynamically populated node cards -->
-                <div
-                    style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #D1E7FF;">
-                    Loading active node connections...
-                </div>
-            </div>
-        </div>
 
         <!-- System Activity Row -->
-        <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap:1.5rem; margin-bottom:3rem;">
-            <!-- Left: Audit Trails -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:3rem;">
+            <!-- Left: Active Middleware Node Status -->
             <div class="metric-card" style="display: flex; flex-direction: column;">
-                <h3 style="margin-bottom:1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
+                <h3 style="margin-bottom:1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem; color: var(--text-main);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
                     </svg>
-                    History Logs
+                    Active Middleware Node Status
                 </h3>
-                <div class="table-container" style="box-shadow:none; border:1px solid #D1E7FF; flex: 1; max-height: 380px; overflow-y: auto; padding-right: 0.25rem; background: white;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 25%;">Timestamp</th>
-                                <th style="width: 20%;">Node</th>
-                                <th style="width: 55%;">Action Details</th>
-                            </tr>
-                        </thead>
-                        <tbody id="auditTableBody">
-                            <tr>
-                                <td colspan="3" style="text-align:center; color:var(--text-muted);">Monitoring
-                                    transactions...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div style="flex: 1; padding: 1.5rem; background: white; border-radius: 0.75rem; border: 1px solid #D1E7FF; overflow-y: auto; max-height: 400px; padding-right: 0.5rem;">
+                    <div class="nodes-grid" id="nodeContainer" style="margin-bottom: 0; display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                        <!-- Dynamically populated node cards -->
+                        <div style="text-align: center; padding: 3rem; color: var(--text-muted); background: #F8FAFC; border-radius: 0.5rem; border: 1px dashed #CBD5E1;">
+                            Loading active node connections...
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: right; margin-top: 1rem; border-top: 1px solid #E2E8F0; padding-top: 1rem;">
+                    <button class="btn btn-primary" onclick="openAddPharmacyModal()" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Register Pharmacy
+                    </button>
                 </div>
             </div>
 
             <!-- Right: Resident Inquiries Inbox -->
             <div class="metric-card" style="display: flex; flex-direction: column;">
-                <h3 style="margin-bottom:0.25rem; font-weight:800; display:flex; align-items:center; gap:0.5rem; color: var(--text-main);">
+                <h3 style="margin-bottom:1.25rem; font-weight:800; display:flex; align-items:center; gap:0.5rem; color: var(--text-main);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                     Resident Inquiries Inbox
                 </h3>
-                <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:1.25rem;">Live community suggestions and contact inquiries sent via the portal.</p>
                 <div style="flex: 1; overflow-y: auto; max-height: 380px; padding-right: 0.5rem;" id="suggestionInboxBox">
                     <div style="text-align:center; padding:3rem; color:var(--text-muted); font-size: 0.9rem;">
                         Loading suggestions inbox...
@@ -311,9 +333,137 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
                 </div>
             </div>
         </div>
+
+
     </main>
 
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fda-modal">
+        <div class="fda-modal-content" style="max-width: 450px;">
+            <div class="fda-modal-header">
+                <div>
+                    <h3 style="margin:0; font-weight:800; color:var(--text-main); font-size: 1.4rem;">
+                        Edit Profile
+                    </h3>
+                    <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem; margin: 0.25rem 0 0 0;">Update your administrator details</p>
+                </div>
+                <button onclick="closeEditProfileModal()" style="background:none; border:none; font-size:1.75rem; color:#94A3B8; cursor:pointer; line-height:1;">&times;</button>
+            </div>
+            <div class="fda-modal-body">
+                <form id="editProfileForm" onsubmit="submitEditProfile(event)">
+                        <div id="editProfileAlert" class="alert-banner" style="display:none; margin-bottom:1rem;"></div>
+                        
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Name</label>
+                            <input type="text" id="editName" name="name" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="editUsername" name="username" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label">New Password <span style="color:#94A3B8; font-size:0.75rem; font-weight:normal;">(Leave blank to keep current)</span></label>
+                            <input type="password" name="password" class="form-input" minlength="6" placeholder="Enter new password">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Pharmacy Modal -->
+    <div id="addPharmacyModal" class="fda-modal">
+        <div class="fda-modal-content">
+            <div class="fda-modal-header">
+                <div>
+                    <h3 style="margin:0; font-weight:800; color:var(--text-main); font-size: 1.4rem;">
+                        Register New Pharmacy
+                    </h3>
+                    <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem; margin: 0.25rem 0 0 0;">Add a node to the network</p>
+                </div>
+                <button onclick="closeAddPharmacyModal()" style="background:none; border:none; font-size:1.75rem; color:#94A3B8; cursor:pointer; line-height:1;">&times;</button>
+            </div>
+            <div class="fda-modal-body">
+                <form id="addPharmacyForm" onsubmit="submitAddPharmacy(event)">
+                        <div id="addPharmacyAlert" class="alert-banner" style="display:none; margin-bottom:1rem;"></div>
+                        
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Pharmacy Name</label>
+                            <input type="text" id="addName" name="name" class="form-input" required oninput="generateUniqueCode()">
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Unique Code (Auto-generated/Editable)</label>
+                            <input type="text" id="addCode" name="code" class="form-input" required style="text-transform: uppercase;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" class="form-input" required>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Latitude</label>
+                                <input type="number" step="any" name="latitude" class="form-input" value="14.0702" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Longitude</label>
+                                <input type="number" step="any" name="longitude" class="form-input" value="122.9610" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Contact Number (Optional)</label>
+                                <input type="text" name="contact_number" class="form-input">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Email (Optional)</label>
+                                <input type="email" name="email" class="form-input">
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 1.5rem 0 1rem; font-size: 0.9rem; color: var(--text-muted); border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5rem;">Login Credentials</h4>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Username</label>
+                                <input type="text" name="username" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 700;">
+                            Register Pharmacy Node
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     <script>
+        function openAddPharmacyModal() {
+            document.getElementById('addPharmacyModal').style.display = 'flex';
+        }
+
+        function closeAddPharmacyModal() {
+            document.getElementById('addPharmacyModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('addPharmacyModal');
+            if (event.target === modal) {
+                closeAddPharmacyModal();
+            }
+        }
+
         function escapeHTML(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g,
@@ -349,15 +499,20 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
                     if (data.error) return;
 
                     // Update Nodes Grid with dynamic metadata and dual status trackings
+                    let totalPharmacies = 0;
+                    let onlineDatabases = 0;
                     let nodeHtml = '';
                     if (!data.pharmacies || data.pharmacies.length === 0) {
                         nodeHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: 1rem; border: 1px solid #D1E7FF;">No active partner nodes registered.</div>`;
                     } else {
+                        totalPharmacies = data.pharmacies.length;
                         data.pharmacies.forEach(pharmacy => {
                             const key = pharmacy.code;
                             const dbStatus = data.nodes[key] || "OFFLINE";
                             const isDbOnline = dbStatus === "ONLINE";
                             const isStoreOpen = parseInt(pharmacy.is_open) === 1;
+
+                            if (isDbOnline) onlineDatabases++;
 
                             const dbDotPulse = isDbOnline ? "active" : "danger-pulse";
                             const dbIndicatorColor = isDbOnline ? "var(--success)" : "var(--danger)";
@@ -408,19 +563,7 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
                     }
                     document.getElementById('nodeContainer').innerHTML = nodeHtml;
 
-                    // Update Audit Trails
-                    const auditBody = document.getElementById('auditTableBody');
-                    if (data.audit_trails.length === 0) {
-                        auditBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No logs documented yet.</td></tr>`;
-                    } else {
-                        auditBody.innerHTML = data.audit_trails.map(item => `
-                            <tr>
-                                <td style="font-size:0.85rem; color:var(--text-muted);">${item.timestamp || 'Just Now'}</td>
-                                <td><span class="badge" style="background:#F1F5F9; color:#475569; padding:0.25rem 0.5rem; font-size:0.75rem;">${item.pharmacy_code.toUpperCase()}</span></td>
-                                <td style="font-weight:500;">${item.message}</td>
-                            </tr>
-                        `).join('');
-                    }
+                    // (Audit Trails removed)
 
                     // Update Suggestions Inbox
                     const inboxBox = document.getElementById('suggestionInboxBox');
@@ -452,12 +595,121 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
                             `;
                         }).join('');
                     }
+                    // Update Quick Stats
+                    document.getElementById('statTotalPharmacies').innerText = totalPharmacies;
+                    document.getElementById('statOnlineDatabases').innerText = onlineDatabases;
+                    document.getElementById('statTotalInquiries').innerText = data.suggestions ? data.suggestions.length : 0;
                 });
         }
 
         // Auto refresh setup (checks every 3 seconds)
         setInterval(refreshAdminConsole, 3000);
         refreshAdminConsole();
+
+        // Add Pharmacy JavaScript Logic
+        function generateUniqueCode() {
+            const name = document.getElementById('addName').value;
+            const codeInput = document.getElementById('addCode');
+            // Remove non-alphanumeric, uppercase, up to 20 chars
+            const generated = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 20);
+            codeInput.value = generated;
+        }
+
+        async function submitAddPharmacy(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const alertBox = document.getElementById('addPharmacyAlert');
+            
+            try {
+                const response = await fetch('api/add_pharmacy.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'alert-banner alert-banner-success';
+                    alertBox.innerHTML = `<strong>Success!</strong> ${data.message}`;
+                    form.reset();
+                    // trigger auto-refresh for nodes grid
+                    refreshAdminConsole();
+                    
+                    // Hide alert after 5 seconds and close modal
+                    setTimeout(() => { 
+                        alertBox.style.display = 'none'; 
+                        closeAddPharmacyModal();
+                    }, 2000);
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'alert-banner alert-banner-error';
+                    alertBox.innerHTML = `<strong>Error!</strong> ${data.message}`;
+                }
+            } catch(err) {
+                alertBox.style.display = 'block';
+                alertBox.className = 'alert-banner alert-banner-error';
+                alertBox.innerHTML = `<strong>Error!</strong> Failed to communicate with server.`;
+            }
+        }
+
+        // Edit Profile JS
+        async function openEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'flex';
+            document.getElementById('editProfileAlert').style.display = 'none';
+            document.getElementById('editProfileForm').reset();
+            try {
+                const res = await fetch('api/update_profile.php');
+                const result = await res.json();
+                if (result.status === 'success') {
+                    document.getElementById('editName').value = result.data.name;
+                    document.getElementById('editUsername').value = result.data.username;
+                }
+            } catch(err) {
+                console.error("Error fetching profile", err);
+            }
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        async function submitEditProfile(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const alertBox = document.getElementById('editProfileAlert');
+            
+            try {
+                const response = await fetch('api/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'alert-banner alert-banner-success';
+                    alertBox.innerHTML = `<strong>Success!</strong> ${data.message}`;
+                    
+                    document.getElementById('portalUserName').innerText = document.getElementById('editUsername').value;
+                    
+                    setTimeout(() => { 
+                        alertBox.style.display = 'none'; 
+                        closeEditProfileModal();
+                    }, 2000);
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'alert-banner alert-banner-error';
+                    alertBox.innerHTML = `<strong>Error!</strong> ${data.message}`;
+                }
+            } catch(err) {
+                alertBox.style.display = 'block';
+                alertBox.className = 'alert-banner alert-banner-error';
+                alertBox.innerHTML = `<strong>Error!</strong> Failed to update profile.`;
+            }
+        }
     </script>
 </body>
 

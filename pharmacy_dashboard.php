@@ -664,6 +664,57 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                 position: static;
             }
         }
+        /* Modal Styles */
+        .fda-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: flex-start;
+            justify-content: center;
+            padding: 4rem 1.5rem 1.5rem 1.5rem;
+        }
+
+        .fda-modal-content {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid #E2E8F0;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .fda-modal-header {
+            padding: 1.5rem 1.75rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: #FAFBFD;
+        }
+
+        .fda-modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            background: #F8FAFC;
+        }
     </style>
 </head>
 
@@ -681,13 +732,65 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
                 <span><span style="color: var(--primary);">Pharma</span><span style="color: black;">Sync</span></span>
             </a>
             <div class="nav-links">
-                <span
-                    style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em;">PORTAL:
-                    <?php echo htmlspecialchars($pharmaName); ?></span>
+                <span onclick="openEditProfileModal()" class="portal-badge"
+                    style="background: #EFF6FF; color: var(--primary); font-weight: 700; font-size: 0.8rem; padding: 0.4rem 1rem; border-radius: 2rem; text-transform: uppercase; display: inline-flex; align-items: center; margin-right: 0.75rem; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s ease;">PORTAL:
+                    <span id="portalUserName"><?php echo htmlspecialchars($pharmaName); ?></span></span>
                 <a href="logout.php" class="btn-switch-role">Logout</a>
             </div>
         </div>
     </nav>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fda-modal">
+        <div class="fda-modal-content" style="max-width: 500px;">
+            <div class="fda-modal-header">
+                <div>
+                    <h3 style="margin:0; font-weight:800; color:var(--text-main); font-size: 1.4rem;">
+                        Edit Profile
+                    </h3>
+                    <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem; margin: 0.25rem 0 0 0;">Update your pharmacy details</p>
+                </div>
+                <button onclick="closeEditProfileModal()" style="background:none; border:none; font-size:1.75rem; color:#94A3B8; cursor:pointer; line-height:1;">&times;</button>
+            </div>
+            <div class="fda-modal-body">
+                <form id="editProfileForm" onsubmit="submitEditProfile(event)">
+                        <div id="editProfileAlert" class="alert-banner" style="display:none; margin-bottom:1rem;"></div>
+                        
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Pharmacy Name</label>
+                            <input type="text" id="editName" name="name" class="form-input" required>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="editUsername" name="username" class="form-input" required>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Address</label>
+                            <input type="text" id="editAddress" name="address" class="form-input" required>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" id="editContact" name="contact_number" class="form-input">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="editEmail" name="email" class="form-input">
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label">New Password <span style="color:#94A3B8; font-size:0.75rem; font-weight:normal;">(Leave blank to keep current)</span></label>
+                            <input type="password" name="password" class="form-input" minlength="6" placeholder="Enter new password">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <main class="container animate-fade">
         <div id="syncBanner" class="alert-banner animate-fade">
@@ -2232,6 +2335,66 @@ $pharmaName = $names[$pharma] ?? "Pharmacy Portal";
         loadPosProducts();
         loadSalesHistory();
         loadLogs();
+
+        // Edit Profile JS
+        async function openEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'flex';
+            document.getElementById('editProfileAlert').style.display = 'none';
+            document.getElementById('editProfileForm').reset();
+            try {
+                const res = await fetch('api/update_profile.php');
+                const result = await res.json();
+                if (result.status === 'success') {
+                    document.getElementById('editName').value = result.data.name;
+                    document.getElementById('editUsername').value = result.data.username;
+                    document.getElementById('editAddress').value = result.data.address;
+                    document.getElementById('editContact').value = result.data.contact_number;
+                    document.getElementById('editEmail').value = result.data.email;
+                }
+            } catch(err) {
+                console.error("Error fetching profile", err);
+            }
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        async function submitEditProfile(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const alertBox = document.getElementById('editProfileAlert');
+            
+            try {
+                const response = await fetch('api/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'alert-banner alert-banner-success';
+                    alertBox.innerHTML = `<strong>Success!</strong> ${data.message}`;
+                    
+                    document.getElementById('portalUserName').innerText = document.getElementById('editName').value;
+                    
+                    setTimeout(() => { 
+                        alertBox.style.display = 'none'; 
+                        closeEditProfileModal();
+                    }, 2000);
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'alert-banner alert-banner-error';
+                    alertBox.innerHTML = `<strong>Error!</strong> ${data.message}`;
+                }
+            } catch(err) {
+                alertBox.style.display = 'block';
+                alertBox.className = 'alert-banner alert-banner-error';
+                alertBox.innerHTML = `<strong>Error!</strong> Failed to update profile.`;
+            }
+        }
     </script>
 </body>
 
