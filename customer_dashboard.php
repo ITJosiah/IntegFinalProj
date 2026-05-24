@@ -81,8 +81,8 @@ $activePage = 'home';
                                 Sort by
                             </span>
                             <div class="sort-toggle">
-                                <button class="sort-toggle-btn active" id="sortLocalNearest" onclick="sortLocalResults('nearest')">Nearest</button>
-                                <button class="sort-toggle-btn" id="sortLocalAlpha" onclick="sortLocalResults('alpha')">Alphabetical</button>
+                                <button class="sort-toggle-btn active" id="sortLocalAlpha" onclick="sortLocalResults('alpha')">Alphabetical</button>
+                                <button class="sort-toggle-btn" id="sortLocalNearest" onclick="sortLocalResults('nearest')">Nearest</button>
                             </div>
                         </div>
 
@@ -126,7 +126,7 @@ $activePage = 'home';
 <script>
     let activeFdaResults = [];
     let currentLocalItems = [];
-    let currentLocalSort = 'nearest';
+    let currentLocalSort = 'alpha';
     let userLat = null;
     let userLng = null;
     let locationReady = false;

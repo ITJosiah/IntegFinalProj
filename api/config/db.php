@@ -13,11 +13,11 @@ function getDBConnection($dbName = '')
         $pass = ''; // Default XAMPP has no password
         $realDbName = 'pharmasync_db'; // The unified local database
     } else {
-        // AWARDSPACE CONFIGURATION (Live Deployment)
-        $host = 'fdb1032.awardspace.net';
-        $user = '4760236_pharmasyncdb';
-        $pass = 'AWARDjosiah1'; 
-        $realDbName = '4760236_pharmasyncdb';
+        // INFINITYFREE CONFIGURATION (Live Deployment)
+        $host = 'sql306.infinityfree.com';
+        $user = 'if0_41951737';
+        $pass = '6cv9nOfhQw'; 
+        $realDbName = 'if0_41951737_pharmasync';
     }
     
     $charset = 'utf8mb4';

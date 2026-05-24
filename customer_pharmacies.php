@@ -126,8 +126,8 @@ $pharmacies = $stmt->fetchAll();
                             Sort by
                         </span>
                         <div class="sort-toggle">
-                            <button class="sort-toggle-btn" id="sortNearest" onclick="sortPharmacies('nearest')">Nearest</button>
                             <button class="sort-toggle-btn active" id="sortAlpha" onclick="sortPharmacies('alpha')">Alphabetical</button>
+                            <button class="sort-toggle-btn" id="sortNearest" onclick="sortPharmacies('nearest')">Nearest</button>
                         </div>
                     </div>
 
@@ -251,15 +251,19 @@ $pharmacies = $stmt->fetchAll();
     let userLat = null;
     let userLng = null;
     let locationReady = false;
-    let currentSort = 'alpha';
+    let currentSort = 'nearest';
 
     // ── Geolocation ──
     if (navigator.geolocation) {
+        // Show notice initially since location is loading/requesting
+        document.getElementById('locationNotice').style.display = '';
+
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 userLat = pos.coords.latitude;
                 userLng = pos.coords.longitude;
                 locationReady = true;
+                document.getElementById('locationNotice').style.display = 'none';
 
                 // Send to server
                 fetch('api/update_location.php', {
@@ -270,10 +274,25 @@ $pharmacies = $stmt->fetchAll();
 
                 // Calculate and show distance badges
                 updateDistanceBadges();
+
+                // Sort by nearest now that location is ready
+                if (currentSort === 'nearest') {
+                    sortPharmacies('nearest');
+                }
             },
-            () => { /* denied */ },
+            () => {
+                // Location access denied/failed
+                if (currentSort === 'nearest') {
+                    document.getElementById('locationNotice').style.display = '';
+                }
+            },
             { enableHighAccuracy: true, timeout: 10000 }
         );
+    } else {
+        // Geolocation not supported
+        if (currentSort === 'nearest') {
+            document.getElementById('locationNotice').style.display = '';
+        }
     }
 
     // Haversine
