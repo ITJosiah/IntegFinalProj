@@ -34,8 +34,8 @@ $activePage = 'home';
             </div>
 
             <div class="lookup-badges">
-                <span class="lookup-badge">GLOBAL: OPENFDA</span>
                 <span class="lookup-badge">LOCAL: MYSQL DB</span>
+                <span class="lookup-badge">GLOBAL: OPENFDA</span>
             </div>
         </div>
 
@@ -62,20 +62,7 @@ $activePage = 'home';
                 </div>
 
                 <div class="results-columns">
-                    <!-- Left: Global openFDA -->
-                    <div class="results-col">
-                        <div class="col-header">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                            <span class="col-title">Global Database</span>
-                            <span class="col-meta">Source: openFDA</span>
-                        </div>
-                        <div id="globalResults"></div>
-                    </div>
-
-                    <!-- Vertical divider -->
-                    <div class="col-divider"></div>
-
-                    <!-- Right: Local Stock -->
+                    <!-- Left: Local Stock -->
                     <div class="results-col">
                         <div class="col-header">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
@@ -112,6 +99,19 @@ $activePage = 'home';
                         </div>
 
                         <div id="localResults"></div>
+                    </div>
+
+                    <!-- Vertical divider -->
+                    <div class="col-divider"></div>
+
+                    <!-- Right: Global openFDA -->
+                    <div class="results-col">
+                        <div class="col-header">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            <span class="col-title">Global Database</span>
+                            <span class="col-meta">Source: openFDA</span>
+                        </div>
+                        <div id="globalResults"></div>
                     </div>
                 </div>
             </div>
