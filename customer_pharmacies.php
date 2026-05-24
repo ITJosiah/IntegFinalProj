@@ -126,8 +126,8 @@ $pharmacies = $stmt->fetchAll();
                             Sort by
                         </span>
                         <div class="sort-toggle">
-                            <button class="sort-toggle-btn active" id="sortAlpha" onclick="sortPharmacies('alpha')">Alphabetical</button>
                             <button class="sort-toggle-btn" id="sortNearest" onclick="sortPharmacies('nearest')">Nearest</button>
+                            <button class="sort-toggle-btn active" id="sortAlpha" onclick="sortPharmacies('alpha')">Alphabetical</button>
                         </div>
                     </div>
 

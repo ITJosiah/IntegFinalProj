@@ -320,12 +320,17 @@ $activePage = 'home';
             <div class="local-card" data-name="${safePharmaName}" data-address="${safeAddress}" data-contact="${safeContact}" data-open="${med.is_open}" onclick="showPharmaDetails(this)">
                 <div class="local-card-top">
                     <div class="local-card-info">
-                        <p class="local-drug-name">
-                            ${med.brand_name} 
-                            <span class="local-generic">(${med.generic_name})</span>
-                            <span class="drug-badge ${parseInt(med.prescription_required) === 1 ? 'rx' : 'otc'}">${parseInt(med.prescription_required) === 1 ? 'Rx' : 'OTC'}</span>
-                        </p>
-                        <span class="local-pharmacy-link">${med.pharmacy_name} ${distanceBadgeHTML(med._distance)}</span>
+                        <div class="local-drug-name-wrap" style="display: flex; align-items: flex-start; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.2rem;">
+                            <p class="local-drug-name" style="margin: 0; line-height: 1.3;">
+                                ${med.brand_name} 
+                                <span class="local-generic" style="white-space: nowrap;">(${med.generic_name})</span>
+                            </p>
+                            <span class="drug-badge ${parseInt(med.prescription_required) === 1 ? 'rx' : 'otc'}" style="margin-top: 0.1rem; white-space: nowrap;">${parseInt(med.prescription_required) === 1 ? 'Rx' : 'OTC'}</span>
+                        </div>
+                        <div class="local-pharmacy-wrap" style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.2rem;">
+                            <span class="local-pharmacy-link" style="margin: 0; display: inline-flex; align-items: center; gap: 0.2rem;">${med.pharmacy_name}</span>
+                            ${distanceBadgeHTML(med._distance).replace('margin-left: 0.4rem;', 'margin-left: 0;')}
+                        </div>
                     </div>
                     <div class="local-price-wrap">
                         <span class="local-price">₱${price}</span>
