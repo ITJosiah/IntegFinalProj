@@ -82,6 +82,35 @@ $activePage = 'home';
                             <span class="col-title">Local availability</span>
                             <span class="col-meta">Location: Basud, CN</span>
                         </div>
+
+                        <!-- Sort Toggle Bar -->
+                        <div class="sort-bar" id="localSortBar" style="display: none; margin-top: 1rem;">
+                            <span class="sort-bar-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="4" y1="6" x2="16" y2="6"></line>
+                                    <line x1="4" y1="12" x2="12" y2="12"></line>
+                                    <line x1="4" y1="18" x2="8" y2="18"></line>
+                                </svg>
+                                Sort by
+                            </span>
+                            <div class="sort-toggle">
+                                <button class="sort-toggle-btn active" id="sortLocalNearest" onclick="sortLocalResults('nearest')">Nearest</button>
+                                <button class="sort-toggle-btn" id="sortLocalAlpha" onclick="sortLocalResults('alpha')">Alphabetical</button>
+                            </div>
+                        </div>
+
+                        <!-- Location notice -->
+                        <div id="localLocationNotice" style="display: none;">
+                            <span class="location-notice">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Enable location access to sort by nearest.
+                            </span>
+                        </div>
+
                         <div id="localResults"></div>
                     </div>
                 </div>
@@ -96,6 +125,8 @@ $activePage = 'home';
 
 <script>
     let activeFdaResults = [];
+    let currentLocalItems = [];
+    let currentLocalSort = 'nearest';
     let userLat = null;
     let userLng = null;
     let locationReady = false;
@@ -164,16 +195,18 @@ $activePage = 'home';
 
         document.getElementById('globalResults').innerHTML = spinnerHTML();
         document.getElementById('localResults').innerHTML  = spinnerHTML();
+        document.getElementById('localSortBar').style.display = 'none';
 
         // ── Local MySQL ──
         fetch(`api/search.php?query=${encodeURIComponent(query)}`)
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'success' && res.data && res.data.length > 0) {
-                    let items = res.data;
+                    currentLocalItems = res.data;
+                    document.getElementById('localSortBar').style.display = 'flex';
 
                     // Calculate distance for each item
-                    items.forEach(med => {
+                    currentLocalItems.forEach(med => {
                         if (locationReady && med.pharmacy_lat && med.pharmacy_lng) {
                             med._distance = haversineKm(userLat, userLng, parseFloat(med.pharmacy_lat), parseFloat(med.pharmacy_lng));
                         } else {
@@ -181,59 +214,22 @@ $activePage = 'home';
                         }
                     });
 
-                    // Sort by distance if location is available
-                    if (locationReady) {
-                        items.sort((a, b) => {
-                            if (a._distance === null) return 1;
-                            if (b._distance === null) return -1;
-                            return a._distance - b._distance;
-                        });
-                    }
-
-                    let html = '';
-                    items.forEach(med => {
-                        const stock    = parseInt(med.stock) || 0;
-                        const maxStock = MAX_STOCK;
-                        const pct      = Math.min(100, Math.round((stock / maxStock) * 100));
-                        const barColor = stock === 0 ? '#EF4444' : (stock < 30 ? '#F59E0B' : '#2563EB');
-                        const price    = parseFloat(med.price).toFixed(2);
-
-                        const safePharmaName = med.pharmacy_name ? med.pharmacy_name.replace(/"/g, '&quot;') : '';
-                        const safeAddress = med.pharmacy_address ? med.pharmacy_address.replace(/"/g, '&quot;') : '';
-                        const safeContact = med.contact_number ? med.contact_number.replace(/"/g, '&quot;') : '';
-
-                        html += `
-                        <div class="local-card" data-name="${safePharmaName}" data-address="${safeAddress}" data-contact="${safeContact}" data-open="${med.is_open}" onclick="showPharmaDetails(this)">
-                            <div class="local-card-top">
-                                <div class="local-card-info">
-                                    <p class="local-drug-name">
-                                        ${med.brand_name} 
-                                        <span class="local-generic">(${med.generic_name})</span>
-                                        <span class="drug-badge ${parseInt(med.prescription_required) === 1 ? 'rx' : 'otc'}">${parseInt(med.prescription_required) === 1 ? 'Rx' : 'OTC'}</span>
-                                    </p>
-                                    <span class="local-pharmacy-link">${med.pharmacy_name} ${distanceBadgeHTML(med._distance)}</span>
-                                </div>
-                                <div class="local-price-wrap">
-                                    <span class="local-price">₱${price}</span>
-                                    <span class="local-per">PER PIECE</span>
-                                </div>
-                            </div>
-                            <div class="local-stock-bar-wrap">
-                                <div class="local-stock-bar">
-                                    <div class="local-stock-fill" style="width:${pct}%; background:${barColor};"></div>
-                                </div>
-                                <span class="local-stock-label">${stock === 0 ? 'Out of stock' : stock + ' in stock'}</span>
-                            </div>
-                        </div>`;
-                    });
-                    document.getElementById('localResults').innerHTML = html;
+                    // Sort and render
+                    sortLocalResults(currentLocalSort);
                 } else {
+                    currentLocalItems = [];
+                    document.getElementById('localSortBar').style.display = 'none';
+                    document.getElementById('localLocationNotice').style.display = 'none';
                     document.getElementById('localResults').innerHTML = emptyHTML('No local records', 'No matching stocks found across Basud pharmacies.');
                 }
             })
             .catch(() => {
+                currentLocalItems = [];
+                document.getElementById('localSortBar').style.display = 'none';
+                document.getElementById('localLocationNotice').style.display = 'none';
                 document.getElementById('localResults').innerHTML = emptyHTML('Query failed', 'Could not reach the local database.');
             });
+
 
         // ── openFDA Global ──
         const fdaUrl = `https://api.fda.gov/drug/label.json?search=openfda.generic_name:${encodeURIComponent(query)}*+openfda.brand_name:${encodeURIComponent(query)}*&limit=5`;
@@ -278,6 +274,73 @@ $activePage = 'home';
         document.getElementById('resultsArea').style.display = 'none';
         document.getElementById('emptyState').style.display  = 'flex';
         document.getElementById('searchInput').focus();
+    }
+
+    function sortLocalResults(mode) {
+        currentLocalSort = mode;
+        document.getElementById('sortLocalNearest').classList.toggle('active', mode === 'nearest');
+        document.getElementById('sortLocalAlpha').classList.toggle('active', mode === 'alpha');
+
+        if (mode === 'nearest') {
+            if (!locationReady) {
+                document.getElementById('localLocationNotice').style.display = 'flex';
+            } else {
+                document.getElementById('localLocationNotice').style.display = 'none';
+            }
+            currentLocalItems.sort((a, b) => {
+                const da = a._distance !== null ? a._distance : 9999;
+                const db = b._distance !== null ? b._distance : 9999;
+                return da - db;
+            });
+        } else {
+            document.getElementById('localLocationNotice').style.display = 'none';
+            currentLocalItems.sort((a, b) => {
+                const na = (a.brand_name || '').toLowerCase();
+                const nb = (b.brand_name || '').toLowerCase();
+                return na.localeCompare(nb);
+            });
+        }
+        renderLocalResults();
+    }
+
+    function renderLocalResults() {
+        let html = '';
+        currentLocalItems.forEach(med => {
+            const stock    = parseInt(med.stock) || 0;
+            const maxStock = MAX_STOCK;
+            const pct      = Math.min(100, Math.round((stock / maxStock) * 100));
+            const barColor = stock === 0 ? '#EF4444' : (stock < 30 ? '#F59E0B' : '#2563EB');
+            const price    = parseFloat(med.price).toFixed(2);
+
+            const safePharmaName = med.pharmacy_name ? med.pharmacy_name.replace(/"/g, '&quot;') : '';
+            const safeAddress = med.pharmacy_address ? med.pharmacy_address.replace(/"/g, '&quot;') : '';
+            const safeContact = med.contact_number ? med.contact_number.replace(/"/g, '&quot;') : '';
+
+            html += `
+            <div class="local-card" data-name="${safePharmaName}" data-address="${safeAddress}" data-contact="${safeContact}" data-open="${med.is_open}" onclick="showPharmaDetails(this)">
+                <div class="local-card-top">
+                    <div class="local-card-info">
+                        <p class="local-drug-name">
+                            ${med.brand_name} 
+                            <span class="local-generic">(${med.generic_name})</span>
+                            <span class="drug-badge ${parseInt(med.prescription_required) === 1 ? 'rx' : 'otc'}">${parseInt(med.prescription_required) === 1 ? 'Rx' : 'OTC'}</span>
+                        </p>
+                        <span class="local-pharmacy-link">${med.pharmacy_name} ${distanceBadgeHTML(med._distance)}</span>
+                    </div>
+                    <div class="local-price-wrap">
+                        <span class="local-price">₱${price}</span>
+                        <span class="local-per">PER PIECE</span>
+                    </div>
+                </div>
+                <div class="local-stock-bar-wrap">
+                    <div class="local-stock-bar">
+                        <div class="local-stock-fill" style="width:${pct}%; background:${barColor};"></div>
+                    </div>
+                    <span class="local-stock-label">${stock === 0 ? 'Out of stock' : stock + ' in stock'}</span>
+                </div>
+            </div>`;
+        });
+        document.getElementById('localResults').innerHTML = html;
     }
 
     function cap(str) {
